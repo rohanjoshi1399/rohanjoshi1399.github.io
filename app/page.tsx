@@ -1,16 +1,16 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { 
   MousePointer2, Square, Circle, Type, PenTool, Eraser, Droplet,
   Eye, Layers, MoreHorizontal, Search, Minus, X, Maximize2, 
   User, Briefcase, Code, Mail, Github, Linkedin, Camera,
   Award, GraduationCap, MapPin, Calendar, Download, ExternalLink,
-  Settings, FileText, Zap, Database, Cloud, GitBranch, BookOpen, ChevronUp,
-  ChevronLeft, ChevronRight, Keyboard, Clock, Palette
+  Settings, FileText, Zap, Cloud, GitBranch, BookOpen, ChevronUp,
+  ChevronLeft, ChevronRight, Clock, Palette
 } from 'lucide-react';
 
-import  { personalInfo, education, experience, projects, skillCategories, additionalSkills, quickStats, contactMethods, seekingOpportunities, sectionDescriptions } from '@/data';
+import  { personalInfo, education, experience, projects, skillCategories, contactMethods, seekingOpportunities } from '@/data';
 
 const Portfolio = () => {
   const [activeSection, setActiveSection] = useState('about');
@@ -21,11 +21,10 @@ const Portfolio = () => {
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
   const [cursorVariant, setCursorVariant] = useState('default');
   const [navigationHistory, setNavigationHistory] = useState(['about']);
+  const [selectedTool, setSelectedTool] = useState('pointer');
   
   const sectionsRef = useRef({});
   const mainContentRef = useRef(null);
-  const previousSectionRef = useRef('about');
-  const activeSectionRef = useRef('about');
 
   const sections = [
     { id: 'about', label: 'About', icon: User },
@@ -51,10 +50,31 @@ const Portfolio = () => {
   ];
 
   const galleryPhotos = [
-    { id: 1, title: "Wildlife Moment", caption: "Young Photographer of the Year - International Competition", src: "/photos/wildlife-1.jpg" },
-    { id: 2, title: "Nature's Beauty", caption: "Award-winning wildlife photography", src: "/photos/wildlife-2.jpg" },
-    { id: 3, title: "Through My Lens", caption: "Precision meets creativity", src: "/photos/wildlife-3.jpg" }
+    { id: 1, title: "The Chase", caption: "A lioness chasing a warthog", src: "/static/gallery/photo1.jpg" },
+    { id: 2, title: "Unicorns", caption: "Zebra silhouette in the dusk", src: "/static/gallery/Zebra Silhouette.jpg" },
+    { id: 3, title: "Elephant Holi", caption: "An elephant dust bathing in the golden light", src: "/static/gallery/photo3.jpg" }
   ];
+
+  const tools = [
+    { id: 'pointer', icon: MousePointer2, name: 'Move Tool' },
+    { id: 'square', icon: Square, name: 'Rectangle Tool' },
+    { id: 'circle', icon: Circle, name: 'Ellipse Tool' },
+    { id: 'type', icon: Type, name: 'Type Tool' },
+    { id: 'pen', icon: PenTool, name: 'Pen Tool' },
+    { id: 'eraser', icon: Eraser, name: 'Eraser Tool' },
+    { id: 'brush', icon: Droplet, name: 'Brush Tool' }
+  ];
+
+  const iconMap = {
+    'zap': Zap,
+    'code': Code,
+    'cloud': Cloud,
+    'git-branch': GitBranch,
+    'mail': Mail,
+    'github': Github,
+    'linkedin': Linkedin,
+    'file-text': FileText
+  };
 
   // Custom Cursor Tracking
   useEffect(() => {
@@ -215,11 +235,12 @@ const Portfolio = () => {
           transform: 'translate(-50%, -50%)'
         }}
       >
-        <div className={`transition-all duration-200 ${cursorVariant === 'hover' ? 'scale-125' : 'scale-100'}`}>
-          <div className="relative">
-            <div className="w-4 h-4 border border-cyan-400/60 rounded-full"></div>
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-0.5 h-0.5 bg-cyan-400 rounded-full"></div>
-          </div>
+        <div className={`transition-all duration-200 ${cursorVariant === 'hover' ? 'scale-110' : 'scale-100'}`}>
+          {(() => {
+            const activeTool = tools.find(t => t.id === selectedTool);
+            const ToolIcon = activeTool ? activeTool.icon : MousePointer2;
+            return <ToolIcon className="w-5 h-5 text-cyan-400 drop-shadow-lg" />;
+          })()}
         </div>
       </div>
 
@@ -230,7 +251,7 @@ const Portfolio = () => {
             <div className="w-6 h-6 bg-gradient-to-br from-[#31A8FF] to-[#0078D4] rounded flex items-center justify-center text-white font-bold text-xs shadow-lg" aria-hidden="true">
               Ps
             </div>
-            <span className="text-slate-300 hidden sm:inline font-medium">Photoshop 2024</span>
+            <span className="text-slate-300 sm:inline font-medium">Photoshop {new Date().getFullYear()}</span>
           </div>
           <nav className="hidden md:flex gap-3 text-slate-300" aria-label="Top menu">
             {['File', 'Edit', 'Image', 'Layer', 'Type', 'Select', 'Filter', 'View', 'Window', 'Help'].map(menu => (
@@ -292,7 +313,7 @@ const Portfolio = () => {
             onClick={() => scrollToSection(section.id)}
             onMouseEnter={() => setCursorVariant('hover')}
             onMouseLeave={() => setCursorVariant('default')}
-            className={`min-w-max px-6 py-3 text-sm border-r border-black/30 flex items-center gap-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-cyan-500 cursor-pointer ${
+            className={`min-w-max px-6 py-3 text-xs border-r border-black/30 flex items-center gap-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-cyan-500 cursor-pointer ${
               activeSection === section.id 
                 ? 'bg-[#242424] text-white border-b-2 border-cyan-500 font-semibold' 
                 : 'bg-[#2C2C2C] text-slate-400 hover:text-white hover:bg-[#323232]'
@@ -300,7 +321,7 @@ const Portfolio = () => {
             aria-current={activeSection === section.id ? 'page' : undefined}
           >
             <section.icon className="w-4 h-4" aria-hidden="true" />
-            <span>{section.label}</span>
+            <span>{section.label}.psd</span>
           </button>
         ))}
       </nav>
@@ -308,14 +329,27 @@ const Portfolio = () => {
       <div className="flex flex-1 overflow-hidden">
         {/* Left Toolbar - Decorative */}
         <div className="w-12 bg-[#323232] border-r border-black/30 hidden sm:flex flex-col items-center py-3 gap-1" aria-hidden="true">
-          {[MousePointer2, Square, Circle, Type, PenTool, Eraser, Droplet].map((Icon, idx) => (
-            <div 
-              key={idx}
-              className="w-10 h-10 flex items-center justify-center rounded text-slate-500"
-            >
-              <Icon className="w-4 h-4" />
-            </div>
-          ))}
+          {tools.map((tool) => {
+            const ToolIcon = tool.icon;
+            const isActive = selectedTool === tool.id;
+            return (
+              <button
+                key={tool.id}
+                onClick={() => setSelectedTool(tool.id)}
+                onMouseEnter={() => setCursorVariant('hover')}
+                onMouseLeave={() => setCursorVariant('default')}
+                className={`w-10 h-10 flex items-center justify-center rounded transition-all cursor-pointer ${
+                  isActive 
+                    ? 'bg-[#3C3C3C] text-white' 
+                    : 'text-slate-500 hover:bg-[#3C3C3C] hover:text-white'
+                }`}
+                title={tool.name}
+                aria-label={tool.name}
+              >
+                <ToolIcon className="w-4 h-4" />
+              </button>
+            );
+          })}
         </div>
 
         {/* Main Scrollable Canvas Area */}
@@ -325,7 +359,7 @@ const Portfolio = () => {
           className="flex-1 bg-[#242424] overflow-y-auto scroll-smooth"
           role="main"
         >
-          <div className="max-w-6xl mx-auto px-6 py-12 md:px-8 md:py-16 space-y-24">
+          <div className="max-w-6xl mx-auto px-6 py-16 md:px-8 md:py-10 space-y-18">
             
             {/* About Section - Adjustment Layer Effect */}
             <section 
@@ -345,7 +379,7 @@ const Portfolio = () => {
                         <div className="w-48 h-48 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 p-1 shadow-xl group-hover:scale-105 transition-transform">
                           <div className="w-full h-full rounded-full bg-slate-800 flex items-center justify-center overflow-hidden">
                             {/* <User className="w-16 h-16 text-slate-600" aria-hidden="true" /> */}
-                            <img src="/static/profile.jpg" alt="Rohan Joshi" className="h-fullobject-cover" />
+                            <img src="/static/profile.png" alt="Rohan Joshi" className="h-fullobject-cover" />
                           </div>
                         </div>
                         <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-emerald-500 rounded-full border-4 border-[#2C2C2C] flex items-center justify-center">
@@ -357,11 +391,11 @@ const Portfolio = () => {
                         <h1 id="about-heading" className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-white tracking-tight leading-tight">
                           {personalInfo.name}
                         </h1>
-                        <p className="text-xl md:text-2xl text-cyan-400 font-semibold mb-6">
+                        <p className="text-base lg:text-2xl text-cyan-400 font-semibold mb-6">
                           {personalInfo.title}
                         </p>
                         
-                        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 text-sm md:text-base">
+                        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 text-sm lg:text-base">
                           <div className="flex items-center gap-2 text-slate-300">
                             <MapPin className="w-4 h-4 text-cyan-400 flex-shrink-0" aria-hidden="true" />
                             <span>{personalInfo.location}</span>
@@ -398,7 +432,7 @@ const Portfolio = () => {
                     </div>
                   </div>
 
-                  <p className="text-slate-300 text-base md:text-lg leading-relaxed border-t border-slate-700 pt-8">
+                  <p className="text-slate-300 text-base md:text-md leading-relaxed border-t border-slate-700 pt-8">
                     {personalInfo.summary}
                   </p>
                 </div>
@@ -429,7 +463,7 @@ const Portfolio = () => {
                   
                   <div className="grid md:grid-cols-2 gap-6">
                     {skillCategories.map((area, idx) => {
-                      const IconComponent = area.icon;
+                      const IconComponent = iconMap[area.icon];
                       return (
                         <div key={idx} className="bg-slate-800/30 p-5 rounded-xl border border-slate-700/50">
                           <div className="flex items-center gap-2 mb-4">
@@ -626,7 +660,7 @@ const Portfolio = () => {
                       <div className={`h-2 bg-gradient-to-r ${project.gradient}`} />
                       <div className="p-8 md:p-10">
                         <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-6">
-                          <h3 className="text-2xl md:text-3xl font-bold text-white group-hover:text-emerald-400 transition-colors flex-1">
+                          <h3 className="text-2xl lg:text-3xl font-bold text-white group-hover:text-emerald-400 transition-colors flex-1">
                             {project.title}
                           </h3>
                           <a 
@@ -643,7 +677,7 @@ const Portfolio = () => {
                           </a>
                         </div>
                         
-                        <p className="text-slate-300 text-base md:text-lg leading-relaxed mb-6">
+                        <p className="text-slate-300 text-base lg:text-lg leading-relaxed mb-6">
                           {project.description}
                         </p>
 
@@ -681,7 +715,7 @@ const Portfolio = () => {
                     <h2 id="gallery-heading" className="text-3xl md:text-4xl font-bold text-white">Beyond Code</h2>
                   </div>
                   <p className="text-slate-300 text-base md:text-lg max-w-2xl mx-auto">
-                    Award-winning wildlife photography—capturing nature's moments with the same precision I bring to engineering
+                    I like to capture nature's moments with the same precision I bring to engineering
                   </p>
                 </div>
                 
@@ -695,12 +729,12 @@ const Portfolio = () => {
                       className="relative w-full aspect-[21/9] rounded-xl overflow-hidden bg-slate-800 group cursor-pointer shadow-2xl hover:shadow-purple-500/20 transition-all"
                     >
                       <div className="absolute inset-0 bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 flex items-center justify-center">
-                        <div className="text-center">
+                        {/* <div className="text-center">
                           <Camera className="w-20 h-20 text-slate-600 mx-auto mb-4" aria-hidden="true" />
                           <p className="text-slate-500 text-base font-medium">{photo.title}</p>
                           <p className="text-slate-600 text-sm mt-2">Add your image: {photo.src}</p>
-                        </div>
-                        {/* <img src={photo.src} alt={photo.title} className="w-full h-full object-cover" /> */}
+                        </div> */}
+                        <img src={photo.src} alt={photo.title} className="w-full h-full object-cover" />
                       </div>
                       
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-end p-8">
@@ -749,7 +783,7 @@ const Portfolio = () => {
 
                 <div className="grid md:grid-cols-2 gap-5">
                   {contactMethods.map((contact, idx) => {
-                    const IconComponent = contact.icon;
+                    const IconComponent = iconMap[contact.icon];
                     return (
                       <a 
                         key={idx}
@@ -1045,11 +1079,11 @@ const Portfolio = () => {
           <div className="max-w-6xl w-full" onClick={(e) => e.stopPropagation()}>
             <div className="relative aspect-[21/9] rounded-xl overflow-hidden bg-slate-900 shadow-2xl">
               <div className="absolute inset-0 bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 flex items-center justify-center">
-                <div className="text-center">
+                {/* <div className="text-center">
                   <Camera className="w-24 h-24 text-slate-600 mx-auto mb-4" aria-hidden="true" />
                   <p className="text-slate-400 text-lg font-medium">{lightboxImage.title}</p>
-                </div>
-                {/* <img src={lightboxImage.src} alt={lightboxImage.title} className="w-full h-full object-contain" /> */}
+                </div> */}
+                <img src={lightboxImage.src} alt={lightboxImage.title} className="w-full h-full object-contain" />
               </div>
             </div>
 
