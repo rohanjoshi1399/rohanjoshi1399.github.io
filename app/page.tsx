@@ -1,16 +1,17 @@
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
-import { 
+import Image from 'next/image';
+import {
   MousePointer2, Square, Circle, Type, PenTool, Eraser, Droplet,
-  Eye, Layers, MoreHorizontal, Search, Minus, X, Maximize2, 
+  Eye, Layers, MoreHorizontal, Search, Minus, X, Maximize2,
   User, Briefcase, Code, Mail, Github, Linkedin, Camera,
   Award, GraduationCap, MapPin, Calendar, Download, ExternalLink,
   Settings, FileText, Zap, Cloud, GitBranch, BookOpen, ChevronUp,
   ChevronLeft, ChevronRight, Clock, Palette
 } from 'lucide-react';
 
-import  { personalInfo, education, experience, projects, skillCategories, contactMethods, seekingOpportunities } from '@/data';
+import { personalInfo, education, experience, projects, skillCategories, contactMethods, seekingOpportunities } from '@/data';
 
 const Portfolio = () => {
   const [activeSection, setActiveSection] = useState('about');
@@ -22,7 +23,7 @@ const Portfolio = () => {
   const [cursorVariant, setCursorVariant] = useState('default');
   const [navigationHistory, setNavigationHistory] = useState(['about']);
   const [selectedTool, setSelectedTool] = useState('pointer');
-  
+
   const sectionsRef = useRef({});
   const mainContentRef = useRef(null);
 
@@ -76,13 +77,32 @@ const Portfolio = () => {
     'file-text': FileText
   };
 
-  // Custom Cursor Tracking
+  // Custom Cursor Tracking - Optimized with RAF
   useEffect(() => {
-    const handleMouseMove = (e) => {
-      setCursorPosition({ x: e.clientX, y: e.clientY });
+    let rafId: number | null = null;
+    let lastX = 0;
+    let lastY = 0;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      lastX = e.clientX;
+      lastY = e.clientY;
+
+      // Only update state once per frame using requestAnimationFrame
+      if (rafId === null) {
+        rafId = requestAnimationFrame(() => {
+          setCursorPosition({ x: lastX, y: lastY });
+          rafId = null;
+        });
+      }
     };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+      }
+    };
   }, []);
 
   // P1 Feature: Keyboard Shortcuts
@@ -114,7 +134,7 @@ const Portfolio = () => {
 
       // Arrow keys for navigation  
       const currentIndex = sections.findIndex(s => s.id === activeSection);
-      
+
       if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
         e.preventDefault();
         if (currentIndex < sections.length - 1) {
@@ -138,53 +158,62 @@ const Portfolio = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [lightboxOpen, activeSection]); // Dependencies needed for current values
 
-  // Scroll handler for active section detection and back to top
+  // Optimized section detection using Intersection Observer
   useEffect(() => {
-    const handleScroll = () => {
-      if (!mainContentRef.current) return;
-      
-      const scrollTop = mainContentRef.current.scrollTop;
-      setShowBackToTop(scrollTop > 500);
+    const observerOptions = {
+      root: mainContentRef.current,
+      rootMargin: '-100px 0px -60% 0px', // Trigger when section is near top
+      threshold: 0
+    };
 
-      // Find active section based on scroll position
-      let currentSection = 'about';
-      
-      for (let i = sections.length - 1; i >= 0; i--) {
-        const section = sections[i];
-        const element = sectionsRef.current[section.id];
-        
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          const containerRect = mainContentRef.current.getBoundingClientRect();
-          
-          // If section top is above the 200px mark from container top, it's active
-          if (rect.top - containerRect.top < 200) {
-            currentSection = section.id;
-            break;
-          }
+    const observerCallback = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const sectionId = entry.target.id;
+          setActiveSection(sectionId);
+
+          setNavigationHistory(prev => {
+            // if same as the last recorded section, don't update
+            if (prev[prev.length - 1] === sectionId) return prev;
+            // otherwise, append and cap at 10 entries
+            return [...prev, sectionId].slice(-10);
+          });
         }
-      }
-      
-      setActiveSection(currentSection);
-
-      setNavigationHistory(prev => {
-        // if same as the last recorded section, don't update
-        if (prev[prev.length - 1] === currentSection) return prev;
-
-        // otherwise, append and cap at 10 entries
-        return [...prev, currentSection].slice(-10);
       });
+    };
+
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+    // Observe all sections
+    Object.values(sectionsRef.current).forEach((section) => {
+      if (section instanceof Element) observer.observe(section);
+    });
+
+    // Throttled scroll listener for back-to-top button only
+    let rafId: number | null = null;
+    const handleScroll = () => {
+      if (rafId === null) {
+        rafId = requestAnimationFrame(() => {
+          const scrollTop = mainContentRef.current?.scrollTop || 0;
+          setShowBackToTop(scrollTop > 500);
+          rafId = null;
+        });
+      }
     };
 
     const mainContent = mainContentRef.current;
     if (mainContent) {
-      mainContent.addEventListener('scroll', handleScroll);
+      mainContent.addEventListener('scroll', handleScroll, { passive: true });
       handleScroll(); // Initial call
     }
-    
+
     return () => {
+      observer.disconnect();
       if (mainContent) {
         mainContent.removeEventListener('scroll', handleScroll);
+      }
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
       }
     };
   }, []); // Empty dependency array - only set up once
@@ -192,8 +221,8 @@ const Portfolio = () => {
   const scrollToSection = (sectionId) => {
     // P0: Add to navigation history
     setNavigationHistory(prev => [...prev, sectionId].slice(-10));
-    
-    sectionsRef.current[sectionId]?.scrollIntoView({ 
+
+    sectionsRef.current[sectionId]?.scrollIntoView({
       behavior: 'smooth',
       block: 'start'
     });
@@ -227,10 +256,10 @@ const Portfolio = () => {
   return (
     <div className="h-screen flex flex-col bg-[#535353] text-slate-200 overflow-hidden cursor-none">
       {/* P0: Custom Photoshop Cursor */}
-      <div 
+      <div
         className="fixed pointer-events-none z-50 transition-transform duration-100"
-        style={{ 
-          left: `${cursorPosition.x}px`, 
+        style={{
+          left: `${cursorPosition.x}px`,
           top: `${cursorPosition.y}px`,
           transform: 'translate(-50%, -50%)'
         }}
@@ -285,8 +314,8 @@ const Portfolio = () => {
         <div className="h-4 w-px bg-slate-600 hidden sm:block" aria-hidden="true" />
         <span className="text-slate-400 whitespace-nowrap hidden sm:inline text-xs">M.S. Computer Science @ Northeastern</span>
         <div className="ml-auto flex items-center gap-3">
-          <a 
-            href="#" 
+          <a
+            href="#"
             className="hidden md:flex items-center gap-2 px-4 py-2 bg-slate-800/50 hover:bg-slate-700/50 text-slate-200 rounded-lg border border-slate-600 transition-all hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 text-xs font-medium cursor-pointer"
             onMouseEnter={() => setCursorVariant('hover')}
             onMouseLeave={() => setCursorVariant('default')}
@@ -294,7 +323,7 @@ const Portfolio = () => {
             <Download className="w-3.5 h-3.5" />
             <span>Resume</span>
           </a>
-          <button 
+          <button
             onClick={() => scrollToSection('contact')}
             onMouseEnter={() => setCursorVariant('hover')}
             onMouseLeave={() => setCursorVariant('default')}
@@ -313,11 +342,10 @@ const Portfolio = () => {
             onClick={() => scrollToSection(section.id)}
             onMouseEnter={() => setCursorVariant('hover')}
             onMouseLeave={() => setCursorVariant('default')}
-            className={`min-w-max px-6 py-3 text-xs border-r border-black/30 flex items-center gap-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-cyan-500 cursor-pointer ${
-              activeSection === section.id 
-                ? 'bg-[#242424] text-white border-b-2 border-cyan-500 font-semibold' 
-                : 'bg-[#2C2C2C] text-slate-400 hover:text-white hover:bg-[#323232]'
-            }`}
+            className={`min-w-max px-6 py-3 text-xs border-r border-black/30 flex items-center gap-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-cyan-500 cursor-pointer ${activeSection === section.id
+              ? 'bg-[#242424] text-white border-b-2 border-cyan-500 font-semibold'
+              : 'bg-[#2C2C2C] text-slate-400 hover:text-white hover:bg-[#323232]'
+              }`}
             aria-current={activeSection === section.id ? 'page' : undefined}
           >
             <section.icon className="w-4 h-4" aria-hidden="true" />
@@ -338,11 +366,10 @@ const Portfolio = () => {
                 onClick={() => setSelectedTool(tool.id)}
                 onMouseEnter={() => setCursorVariant('hover')}
                 onMouseLeave={() => setCursorVariant('default')}
-                className={`w-10 h-10 flex items-center justify-center rounded transition-all cursor-pointer ${
-                  isActive 
-                    ? 'bg-[#3C3C3C] text-white' 
-                    : 'text-slate-500 hover:bg-[#3C3C3C] hover:text-white'
-                }`}
+                className={`w-10 h-10 flex items-center justify-center rounded transition-all cursor-pointer ${isActive
+                  ? 'bg-[#3C3C3C] text-white'
+                  : 'text-slate-500 hover:bg-[#3C3C3C] hover:text-white'
+                  }`}
                 title={tool.name}
                 aria-label={tool.name}
               >
@@ -353,18 +380,18 @@ const Portfolio = () => {
         </div>
 
         {/* Main Scrollable Canvas Area */}
-        <main 
+        <main
           id="main-content"
           ref={mainContentRef}
           className="flex-1 bg-[#242424] overflow-y-auto scroll-smooth"
           role="main"
         >
           <div className="max-w-6xl mx-auto px-6 py-16 md:px-8 md:py-10 space-y-18">
-            
+
             {/* About Section - Adjustment Layer Effect */}
-            <section 
-              id="about" 
-              ref={el => sectionsRef.current['about'] = el} 
+            <section
+              id="about"
+              ref={el => sectionsRef.current['about'] = el}
               className="scroll-mt-4"
               style={{ filter: 'brightness(1.05) contrast(1.02)' }}
               aria-labelledby="about-heading"
@@ -379,7 +406,14 @@ const Portfolio = () => {
                         <div className="w-48 h-48 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 p-1 shadow-xl group-hover:scale-105 transition-transform">
                           <div className="w-full h-full rounded-full bg-slate-800 flex items-center justify-center overflow-hidden">
                             {/* <User className="w-16 h-16 text-slate-600" aria-hidden="true" /> */}
-                            <img src="/static/profile.png" alt="Rohan Joshi" className="h-fullobject-cover" />
+                            <Image
+                              src="/static/profile.png"
+                              alt="Rohan Joshi"
+                              width={192}
+                              height={192}
+                              priority
+                              className="h-full w-full object-cover"
+                            />
                           </div>
                         </div>
                         <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-emerald-500 rounded-full border-4 border-[#2C2C2C] flex items-center justify-center">
@@ -394,7 +428,7 @@ const Portfolio = () => {
                         <p className="text-base lg:text-2xl text-cyan-400 font-semibold mb-6">
                           {personalInfo.title}
                         </p>
-                        
+
                         <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 text-sm lg:text-base">
                           <div className="flex items-center gap-2 text-slate-300">
                             <MapPin className="w-4 h-4 text-cyan-400 flex-shrink-0" aria-hidden="true" />
@@ -403,8 +437,8 @@ const Portfolio = () => {
                           <div className="h-4 w-px bg-slate-600 hidden sm:block" aria-hidden="true" />
                           <div className="flex items-center gap-2 text-slate-300">
                             <Mail className="w-4 h-4 text-cyan-400 flex-shrink-0" aria-hidden="true" />
-                            <a 
-                              href={`mailto:${personalInfo.email}`} 
+                            <a
+                              href={`mailto:${personalInfo.email}`}
                               className="hover:text-cyan-400 transition-colors focus:outline-none focus:underline"
                             >
                               {personalInfo.email}
@@ -420,7 +454,7 @@ const Portfolio = () => {
                     </div>
 
                     <div className="flex flex-col gap-3 lg:min-w-[200px]">
-                                              <button 
+                      <button
                         onClick={() => scrollToSection('contact')}
                         onMouseEnter={() => setCursorVariant('hover')}
                         onMouseLeave={() => setCursorVariant('default')}
@@ -460,7 +494,7 @@ const Portfolio = () => {
                     <Code className="w-6 h-6 text-emerald-400" aria-hidden="true" />
                     <h2 className="text-2xl font-bold text-white">Technical Skills</h2>
                   </div>
-                  
+
                   <div className="grid md:grid-cols-2 gap-6">
                     {skillCategories.map((area, idx) => {
                       const IconComponent = iconMap[area.icon];
@@ -472,8 +506,8 @@ const Portfolio = () => {
                           </div>
                           <div className="flex flex-wrap gap-2">
                             {area.skills.map((skill, i) => (
-                              <span 
-                                key={i} 
+                              <span
+                                key={i}
                                 className="px-3 py-1.5 bg-slate-700/50 text-slate-200 text-sm font-medium rounded-lg border border-slate-600 hover:border-cyan-500/50 transition-colors"
                               >
                                 {skill}
@@ -491,9 +525,9 @@ const Portfolio = () => {
             <hr className="border-slate-700/50" aria-hidden="true" />
 
             {/* Education Section - Adjustment Layer Effect */}
-            <section 
-              id="education" 
-              ref={el => sectionsRef.current['education'] = el} 
+            <section
+              id="education"
+              ref={el => sectionsRef.current['education'] = el}
               className="scroll-mt-4"
               style={{ filter: 'brightness(1.03) saturate(1.1)' }}
               aria-labelledby="education-heading"
@@ -503,10 +537,10 @@ const Portfolio = () => {
                   <GraduationCap className="w-7 h-7 text-purple-400" aria-hidden="true" />
                   <h2 id="education-heading" className="text-3xl md:text-4xl font-bold text-white">Education</h2>
                 </div>
-                
+
                 <div className="space-y-6">
                   {education.map((edu, idx) => (
-                    <div 
+                    <div
                       key={idx}
                       className="bg-gradient-to-br from-[#2C2C2C] to-[#1a1a1a] rounded-xl p-8 shadow-xl border border-slate-700/50 hover:border-purple-500/30 transition-all"
                     >
@@ -541,8 +575,8 @@ const Portfolio = () => {
                         </h4>
                         <div className="flex flex-wrap gap-2">
                           {edu.courses.map((course, i) => (
-                            <span 
-                              key={i} 
+                            <span
+                              key={i}
                               className="px-4 py-2 bg-purple-500/10 text-purple-300 text-sm font-medium rounded-lg border border-purple-500/30"
                             >
                               {course}
@@ -559,9 +593,9 @@ const Portfolio = () => {
             <hr className="border-slate-700/50" aria-hidden="true" />
 
             {/* Experience Section with Timeline - Adjustment Layer Effect */}
-            <section 
-              id="experience" 
-              ref={el => sectionsRef.current['experience'] = el} 
+            <section
+              id="experience"
+              ref={el => sectionsRef.current['experience'] = el}
               className="scroll-mt-4"
               style={{ filter: 'brightness(1.04) contrast(1.05)' }}
               aria-labelledby="experience-heading"
@@ -571,7 +605,7 @@ const Portfolio = () => {
                   <Briefcase className="w-7 h-7 text-blue-400" aria-hidden="true" />
                   <h2 id="experience-heading" className="text-3xl md:text-4xl font-bold text-white">Work Experience</h2>
                 </div>
-                
+
                 {/* Timeline Visualization */}
                 <div className="relative">
                   {/* Vertical Timeline Line */}
@@ -619,8 +653,8 @@ const Portfolio = () => {
 
                           <div className="flex flex-wrap gap-2 pt-6 border-t border-slate-700/50">
                             {exp.tech.map((tech, i) => (
-                              <span 
-                                key={i} 
+                              <span
+                                key={i}
                                 className="px-3 py-1.5 bg-blue-500/10 text-blue-300 text-sm font-semibold rounded-lg border border-blue-500/30"
                               >
                                 {tech}
@@ -638,9 +672,9 @@ const Portfolio = () => {
             <hr className="border-slate-700/50" aria-hidden="true" />
 
             {/* Projects Section - Adjustment Layer Effect + Blend Mode */}
-            <section 
-              id="projects" 
-              ref={el => sectionsRef.current['projects'] = el} 
+            <section
+              id="projects"
+              ref={el => sectionsRef.current['projects'] = el}
               className="scroll-mt-4"
               style={{ filter: 'brightness(1.05) saturate(1.15)', mixBlendMode: 'normal' }}
               aria-labelledby="projects-heading"
@@ -650,11 +684,11 @@ const Portfolio = () => {
                   <Code className="w-7 h-7 text-emerald-400" aria-hidden="true" />
                   <h2 id="projects-heading" className="text-3xl md:text-4xl font-bold text-white">Featured Projects</h2>
                 </div>
-                
+
                 <div className="space-y-6">
                   {projects.map((project, idx) => (
-                    <div 
-                      key={idx} 
+                    <div
+                      key={idx}
                       className="bg-gradient-to-br from-[#2C2C2C] to-[#1a1a1a] border border-slate-700/50 rounded-xl overflow-hidden hover:border-emerald-500/30 hover:shadow-xl transition-all group"
                     >
                       <div className={`h-2 bg-gradient-to-r ${project.gradient}`} />
@@ -663,7 +697,7 @@ const Portfolio = () => {
                           <h3 className="text-2xl lg:text-3xl font-bold text-white group-hover:text-emerald-400 transition-colors flex-1">
                             {project.title}
                           </h3>
-                          <a 
+                          <a
                             href={project.github}
                             target="_blank"
                             rel="noopener noreferrer"
@@ -676,15 +710,15 @@ const Portfolio = () => {
                             <ExternalLink className="w-3.5 h-3.5 opacity-60 group-hover/btn:opacity-100 transition-opacity" />
                           </a>
                         </div>
-                        
+
                         <p className="text-slate-300 text-base lg:text-lg leading-relaxed mb-6">
                           {project.description}
                         </p>
 
                         <div className="flex flex-wrap gap-2">
                           {project.tech.map((tech, i) => (
-                            <span 
-                              key={i} 
+                            <span
+                              key={i}
                               className="px-4 py-2 bg-slate-800/50 text-slate-200 text-sm font-semibold rounded-lg border border-slate-700 hover:border-emerald-500/50 transition-colors"
                             >
                               {tech}
@@ -701,9 +735,9 @@ const Portfolio = () => {
             <hr className="border-slate-700/50" aria-hidden="true" />
 
             {/* Gallery Section - Adjustment Layer Effect */}
-            <section 
-              id="gallery" 
-              ref={el => sectionsRef.current['gallery'] = el} 
+            <section
+              id="gallery"
+              ref={el => sectionsRef.current['gallery'] = el}
               className="scroll-mt-4"
               style={{ filter: 'brightness(1.08) contrast(1.1)' }}
               aria-labelledby="gallery-heading"
@@ -718,10 +752,10 @@ const Portfolio = () => {
                     I like to capture nature's moments with the same precision I bring to engineering
                   </p>
                 </div>
-                
+
                 <div className="space-y-6">
                   {galleryPhotos.map((photo) => (
-                    <div 
+                    <div
                       key={photo.id}
                       onClick={() => openLightbox(photo)}
                       onMouseEnter={() => setCursorVariant('hover')}
@@ -734,16 +768,22 @@ const Portfolio = () => {
                           <p className="text-slate-500 text-base font-medium">{photo.title}</p>
                           <p className="text-slate-600 text-sm mt-2">Add your image: {photo.src}</p>
                         </div> */}
-                        <img src={photo.src} alt={photo.title} className="w-full h-full object-cover" />
+                        <Image
+                          src={photo.src}
+                          alt={photo.title}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+                        />
                       </div>
-                      
+
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-end p-8">
                         <div>
                           <h3 className="text-white text-2xl md:text-3xl font-bold mb-2">{photo.title}</h3>
                           <p className="text-slate-300 text-sm md:text-base">{photo.caption}</p>
                         </div>
                       </div>
-                      
+
                       <div className="absolute top-6 right-6 w-12 h-12 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110">
                         <Search className="w-6 h-6 text-white" aria-hidden="true" />
                       </div>
@@ -765,9 +805,9 @@ const Portfolio = () => {
             <hr className="border-slate-700/50" aria-hidden="true" />
 
             {/* Contact Section */}
-            <section 
-              id="contact" 
-              ref={el => sectionsRef.current['contact'] = el} 
+            <section
+              id="contact"
+              ref={el => sectionsRef.current['contact'] = el}
               className="scroll-mt-4"
               aria-labelledby="contact-heading"
             >
@@ -776,7 +816,7 @@ const Portfolio = () => {
                   <Mail className="w-7 h-7 text-orange-400" aria-hidden="true" />
                   <h2 id="contact-heading" className="text-3xl md:text-4xl font-bold text-white">Get In Touch</h2>
                 </div>
-                
+
                 <p className="text-slate-300 text-base md:text-lg mb-8">
                   I'm actively looking for AI/ML Software Engineering internships for Summer 2026. If you're working on interesting problems in AI systems, distributed architectures, or backend infrastructure, I'd love to chat.
                 </p>
@@ -785,7 +825,7 @@ const Portfolio = () => {
                   {contactMethods.map((contact, idx) => {
                     const IconComponent = iconMap[contact.icon];
                     return (
-                      <a 
+                      <a
                         key={idx}
                         href={contact.href}
                         target={contact.href !== '#' && contact.href.startsWith('http') ? "_blank" : undefined}
@@ -835,7 +875,7 @@ const Portfolio = () => {
         </main>
 
         {/* Right Panels - Desktop only */}
-        <aside 
+        <aside
           className="w-64 bg-[#323232] border-l border-black/30 hidden lg:flex flex-col"
           aria-label="Properties sidebar"
         >
@@ -849,11 +889,10 @@ const Portfolio = () => {
                 role="tab"
                 aria-selected={activeRightPanel === panel.id}
                 aria-controls={`${panel.id}-panel`}
-                className={`flex-1 px-2 py-3 text-xs font-medium transition-all focus:outline-none focus:ring-2 focus:ring-inset focus:ring-cyan-500 cursor-pointer ${
-                  activeRightPanel === panel.id 
-                    ? 'bg-[#323232] text-white border-b-2 border-cyan-500' 
-                    : 'text-slate-400 hover:text-white hover:bg-[#323232]'
-                }`}
+                className={`flex-1 px-2 py-3 text-xs font-medium transition-all focus:outline-none focus:ring-2 focus:ring-inset focus:ring-cyan-500 cursor-pointer ${activeRightPanel === panel.id
+                  ? 'bg-[#323232] text-white border-b-2 border-cyan-500'
+                  : 'text-slate-400 hover:text-white hover:bg-[#323232]'
+                  }`}
               >
                 {panel.label}
               </button>
@@ -894,7 +933,7 @@ const Portfolio = () => {
               <div className="space-y-3">
                 {brandColors.map((color, idx) => (
                   <div key={idx} className="bg-[#2C2C2C] rounded-lg p-3 border border-slate-700/50">
-                    <div 
+                    <div
                       className="w-full h-12 rounded-lg mb-2 shadow-lg cursor-pointer transition-transform hover:scale-105"
                       style={{ backgroundColor: color.hex }}
                       onMouseEnter={() => setCursorVariant('hover')}
@@ -929,13 +968,12 @@ const Portfolio = () => {
                   {sections.map((section) => {
                     const Icon = section.icon;
                     const isActive = activeSection === section.id;
-                    
+
                     return (
                       <div
                         key={section.id}
-                        className={`flex items-center gap-2 p-2 rounded cursor-pointer group transition-all duration-200 ${
-                          isActive ? 'bg-[#1473E6] shadow-lg' : 'hover:bg-[#3C3C3C]'
-                        }`}
+                        className={`flex items-center gap-2 p-2 rounded cursor-pointer group transition-all duration-200 ${isActive ? 'bg-[#1473E6] shadow-lg' : 'hover:bg-[#3C3C3C]'
+                          }`}
                         onClick={() => scrollToSection(section.id)}
                         onMouseEnter={() => setCursorVariant('hover')}
                         onMouseLeave={() => setCursorVariant('default')}
@@ -1042,7 +1080,7 @@ const Portfolio = () => {
 
       {/* Gallery Lightbox Modal - Enhanced with Keyboard Navigation */}
       {lightboxOpen && lightboxImage && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4"
           onClick={closeLightbox}
         >
@@ -1083,7 +1121,14 @@ const Portfolio = () => {
                   <Camera className="w-24 h-24 text-slate-600 mx-auto mb-4" aria-hidden="true" />
                   <p className="text-slate-400 text-lg font-medium">{lightboxImage.title}</p>
                 </div> */}
-                <img src={lightboxImage.src} alt={lightboxImage.title} className="w-full h-full object-contain" />
+                <Image
+                  src={lightboxImage.src}
+                  alt={lightboxImage.title}
+                  fill
+                  className="object-contain"
+                  sizes="100vw"
+                  quality={90}
+                />
               </div>
             </div>
 
@@ -1099,7 +1144,7 @@ const Portfolio = () => {
       )}
     </div>
 
-);
+  );
 };
 
 export default Portfolio;
