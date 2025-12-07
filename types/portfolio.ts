@@ -65,3 +65,10 @@ export interface Section {
   icon: 'user' | 'graduation-cap' | 'briefcase' | 'code' | 'mail';
   color: string;
 } 
+
+export interface GalleryPhoto {
+  id: number;
+  title: string;
+  caption: string;
+  src: string;
+}

@@ -11,6 +11,8 @@ import {
   ChevronLeft, ChevronRight, Clock, Palette
 } from 'lucide-react';
 
+import { GalleryPhoto } from '@/types/portfolio';
+
 import { personalInfo, education, experience, projects, skillCategories, contactMethods, seekingOpportunities } from '@/data';
 
 const Portfolio = () => {
@@ -18,14 +20,14 @@ const Portfolio = () => {
   const [activeRightPanel, setActiveRightPanel] = useState('layers');
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [lightboxImage, setLightboxImage] = useState(null);
+  const [lightboxImage, setLightboxImage] = useState<GalleryPhoto | null>(null);
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
   const [cursorVariant, setCursorVariant] = useState('default');
   const [navigationHistory, setNavigationHistory] = useState(['about']);
   const [selectedTool, setSelectedTool] = useState('pointer');
 
-  const sectionsRef = useRef({});
-  const mainContentRef = useRef(null);
+  const sectionsRef = useRef<{ [key: string]: HTMLElement | null }>({});
+  const mainContentRef = useRef<HTMLDivElement | null>(null);
 
   const sections = [
     { id: 'about', label: 'About', icon: User },
@@ -107,7 +109,7 @@ const Portfolio = () => {
 
   // P1 Feature: Keyboard Shortcuts
   useEffect(() => {
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       // When lightbox is open, only handle lightbox navigation
       if (lightboxOpen) {
         if (e.key === 'Escape') {
@@ -218,7 +220,7 @@ const Portfolio = () => {
     };
   }, []); // Empty dependency array - only set up once
 
-  const scrollToSection = (sectionId) => {
+  const scrollToSection = (sectionId: string) => {
     // P0: Add to navigation history
     setNavigationHistory(prev => [...prev, sectionId].slice(-10));
 
@@ -232,7 +234,7 @@ const Portfolio = () => {
     mainContentRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const openLightbox = (photo) => {
+  const openLightbox = (photo: GalleryPhoto) => {
     setLightboxImage(photo);
     setLightboxOpen(true);
   };
@@ -242,7 +244,8 @@ const Portfolio = () => {
     setLightboxImage(null);
   };
 
-  const navigateLightbox = (direction) => {
+  const navigateLightbox = (direction: 'next' | 'prev') => {
+    if (!lightboxImage) return;
     const currentIndex = galleryPhotos.findIndex(p => p.id === lightboxImage.id);
     let newIndex;
     if (direction === 'next') {
@@ -391,7 +394,7 @@ const Portfolio = () => {
             {/* About Section - Adjustment Layer Effect */}
             <section
               id="about"
-              ref={el => sectionsRef.current['about'] = el}
+              ref={(el) => { sectionsRef.current['about'] = el; }}
               className="scroll-mt-4"
               style={{ filter: 'brightness(1.05) contrast(1.02)' }}
               aria-labelledby="about-heading"
@@ -527,7 +530,7 @@ const Portfolio = () => {
             {/* Education Section - Adjustment Layer Effect */}
             <section
               id="education"
-              ref={el => sectionsRef.current['education'] = el}
+              ref={(el) => { sectionsRef.current['education'] = el; }}
               className="scroll-mt-4"
               style={{ filter: 'brightness(1.03) saturate(1.1)' }}
               aria-labelledby="education-heading"
@@ -595,7 +598,7 @@ const Portfolio = () => {
             {/* Experience Section with Timeline - Adjustment Layer Effect */}
             <section
               id="experience"
-              ref={el => sectionsRef.current['experience'] = el}
+              ref={(el) => { sectionsRef.current['experience'] = el; }}
               className="scroll-mt-4"
               style={{ filter: 'brightness(1.04) contrast(1.05)' }}
               aria-labelledby="experience-heading"
@@ -674,7 +677,7 @@ const Portfolio = () => {
             {/* Projects Section - Adjustment Layer Effect + Blend Mode */}
             <section
               id="projects"
-              ref={el => sectionsRef.current['projects'] = el}
+              ref={(el) => { sectionsRef.current['projects'] = el; }}
               className="scroll-mt-4"
               style={{ filter: 'brightness(1.05) saturate(1.15)', mixBlendMode: 'normal' }}
               aria-labelledby="projects-heading"
@@ -737,7 +740,7 @@ const Portfolio = () => {
             {/* Gallery Section - Adjustment Layer Effect */}
             <section
               id="gallery"
-              ref={el => sectionsRef.current['gallery'] = el}
+              ref={(el) => { sectionsRef.current['gallery'] = el; }}
               className="scroll-mt-4"
               style={{ filter: 'brightness(1.08) contrast(1.1)' }}
               aria-labelledby="gallery-heading"
@@ -807,7 +810,7 @@ const Portfolio = () => {
             {/* Contact Section */}
             <section
               id="contact"
-              ref={el => sectionsRef.current['contact'] = el}
+              ref={(el) => { sectionsRef.current['contact'] = el; }}
               className="scroll-mt-4"
               aria-labelledby="contact-heading"
             >
