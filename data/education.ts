@@ -7,8 +7,9 @@ export const education: Education[] = [
     location: "Seattle, WA",
     period: "Sept. 2025 – May 2027 (Expected)",
     courses: [
-      "Algorithms",
-      "Scalable Distributed Systems"
+      "Scalable Distributed Systems",
+      "Natural Language Processing",
+      "Reinforcement Learning"
     ],
     current: true
   },

@@ -42,10 +42,11 @@ export const ProjectsSection = ({ sectionsRef, setCursorVariant }: ProjectsSecti
                                         onMouseEnter={() => setCursorVariant('hover')}
                                         onMouseLeave={() => setCursorVariant('default')}
                                         className="flex-shrink-0 flex items-center gap-2 px-3 sm:px-5 py-2 sm:py-2.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-semibold transition-all hover:shadow-lg hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-400 group/btn cursor-pointer"
+                                        aria-label={`View ${project.title} source code on GitHub`}
                                     >
-                                        <Github className="w-4 h-4" />
+                                        <Github className="w-4 h-4" aria-hidden="true" />
                                         <span className="hidden sm:inline">View on GitHub</span>
-                                        <ExternalLink className="w-3.5 h-3.5 opacity-60 group-hover/btn:opacity-100 transition-opacity hidden sm:block" />
+                                        <ExternalLink className="w-3.5 h-3.5 opacity-60 group-hover/btn:opacity-100 transition-opacity hidden sm:block" aria-hidden="true" />
                                     </a>
                                 </div>
 

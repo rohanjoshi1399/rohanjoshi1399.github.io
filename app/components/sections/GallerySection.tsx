@@ -48,9 +48,18 @@ export const GallerySection = ({
                         <div
                             key={photo.id}
                             onClick={() => openLightbox(photo)}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                    e.preventDefault();
+                                    openLightbox(photo);
+                                }
+                            }}
+                            tabIndex={0}
+                            role="button"
+                            aria-label={`View ${photo.title} in lightbox`}
                             onMouseEnter={() => setCursorVariant('hover')}
                             onMouseLeave={() => setCursorVariant('default')}
-                            className="relative w-full aspect-[21/9] rounded-xl overflow-hidden bg-slate-800 group cursor-pointer shadow-2xl hover:shadow-purple-500/20 transition-all"
+                            className="gallery-item relative w-full aspect-[21/9] rounded-xl overflow-hidden bg-slate-800 group cursor-pointer shadow-2xl hover:shadow-purple-500/20 focus-visible:shadow-purple-500/30 transition-all"
                         >
                             <div className="absolute inset-0 bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 flex items-center justify-center">
                                 <Image
@@ -62,14 +71,14 @@ export const GallerySection = ({
                                 />
                             </div>
 
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-end p-8">
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-all duration-500 flex items-end p-8">
                                 <div>
                                     <h3 className="text-white text-xl md:text-2xl font-bold mb-2">{photo.title}</h3>
                                     <p className="text-slate-300 text-sm md:text-base">{photo.caption}</p>
                                 </div>
                             </div>
 
-                            <div className="absolute top-6 right-6 w-12 h-12 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110">
+                            <div className="absolute top-6 right-6 w-12 h-12 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-all duration-300 group-hover:scale-110">
                                 <Search className="w-6 h-6 text-white" aria-hidden="true" />
                             </div>
                         </div>

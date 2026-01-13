@@ -47,12 +47,12 @@ const Portfolio = () => {
   const mainContentRef = useRef<HTMLDivElement | null>(null);
 
   const sections = [
-    { id: 'about', label: 'About', icon: User },
-    { id: 'education', label: 'Education', icon: GraduationCap },
-    { id: 'experience', label: 'Experience', icon: Briefcase },
-    { id: 'projects', label: 'Projects', icon: Code },
-    { id: 'gallery', label: 'Gallery', icon: Camera },
-    { id: 'contact', label: 'Contact', icon: Mail }
+    { id: 'about', label: 'About.psd', icon: User },
+    { id: 'education', label: 'Education.psd', icon: GraduationCap },
+    { id: 'experience', label: 'Experience.psd', icon: Briefcase },
+    { id: 'projects', label: 'Projects.psd', icon: Code },
+    { id: 'gallery', label: 'Gallery.psd', icon: Camera },
+    { id: 'contact', label: 'Contact.psd', icon: Mail }
   ];
 
   const brandColors = [
