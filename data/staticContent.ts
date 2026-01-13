@@ -71,7 +71,7 @@ export const seekingOpportunities = {
     "Backend Development",
     "Cloud Infrastructure"
   ],
-  description: "I'm interested in companies pushing the boundaries of AI, whether that's building cutting-edge LLM applications, scaling systems to millions of users, or creating the infrastructure that makes it all possible. I learn quickly, collaborate well, and love diving into hard technical problems."
+  description: "I'm interested in companies tackling problems that matter, whether that's building cutting-edge AI applications, scaling systems to millions of users, or creating the infrastructure that powers the next generation of technology. I learn quickly, collaborate well, and love diving into hard technical problems."
 };
 
 // Section descriptions

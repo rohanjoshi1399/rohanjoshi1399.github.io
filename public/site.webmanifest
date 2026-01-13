@@ -1,0 +1,22 @@
+{
+  "name": "Rohan Joshi - Portfolio",
+  "short_name": "RJ Portfolio",
+  "description": "Software Engineer | AI/ML Enthusiast",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#06B6D4",
+  "background_color": "#242424",
+  "display": "standalone",
+  "start_url": "/",
+  "scope": "/"
+}

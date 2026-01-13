@@ -6,15 +6,15 @@ export { education } from './education';
 export { experience } from './experience';
 export { projects } from './projects';
 export { skillCategories, additionalSkills } from './skills';
-export { 
+export {
   // quickStats, 
   contactMethods,
   seekingOpportunities,
-  sectionDescriptions 
+  sectionDescriptions
 } from './staticContent';
 
 // You can also export types from here if needed
-export type { 
+export type {
   PersonalInfo,
   Education,
   Experience,
