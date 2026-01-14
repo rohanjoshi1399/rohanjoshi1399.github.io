@@ -49,15 +49,15 @@ export const contactMethods: ContactMethod[] = [
     href: "https://linkedin.com/in/therohanjoshi",
     gradient: "from-blue-600 to-blue-800",
     action: "Connect"
-  },
-  {
-    icon: "file-text",
-    label: "Resume",
-    value: "Download my resume",
-    href: "#",
-    gradient: "from-purple-600 to-pink-600",
-    action: "Download PDF"
   }
+  // {
+  //   icon: "file-text",
+  //   label: "Resume",
+  //   value: "Download my resume",
+  //   href: "#",
+  //   gradient: "from-purple-600 to-pink-600",
+  //   action: "Download PDF"
+  // }
 ];
 
 // Seeking opportunities

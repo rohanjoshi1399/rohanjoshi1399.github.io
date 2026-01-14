@@ -35,7 +35,7 @@ export const SectionNav = ({ sections, activeSection, scrollToSection, setCursor
                     aria-current={activeSection === section.id ? 'page' : undefined}
                 >
                     <section.icon className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
-                    <span className="hidden sm:inline">{section.label}</span>
+                    <span className="hidden sm:inline">{section.label}.psd</span>
                 </button>
             ))}
         </nav>

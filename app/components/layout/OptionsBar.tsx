@@ -22,7 +22,7 @@ export const OptionsBar = ({ scrollToSection, setCursorVariant }: OptionsBarProp
             <div className="h-4 w-px bg-slate-600 hidden sm:block" aria-hidden="true" />
             <span className="text-slate-400 whitespace-nowrap hidden sm:inline text-xs">M.S. Computer Science @ Northeastern</span>
             <div className="ml-auto flex items-center gap-3">
-                <a
+                {/* <a
                     href="#"
                     className="hidden md:flex items-center gap-2 px-4 py-2 bg-slate-800/50 hover:bg-slate-700/50 text-slate-200 rounded-lg border border-slate-600 transition-all hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 text-xs font-medium cursor-pointer"
                     onMouseEnter={() => setCursorVariant('hover')}
@@ -30,7 +30,7 @@ export const OptionsBar = ({ scrollToSection, setCursorVariant }: OptionsBarProp
                 >
                     <Download className="w-3.5 h-3.5" />
                     <span>Resume</span>
-                </a>
+                </a> */}
                 <button
                     onClick={() => scrollToSection('contact')}
                     onMouseEnter={() => setCursorVariant('hover')}
