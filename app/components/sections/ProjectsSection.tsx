@@ -23,11 +23,11 @@ export const ProjectsSection = ({ sectionsRef, setCursorVariant }: ProjectsSecti
                     <h2 id="projects-heading" className="text-3xl md:text-4xl font-bold text-white">Featured Projects</h2>
                 </div>
 
-                <div className="space-y-6">
+                <div className="space-y-6 stagger-children">
                     {projects.map((project, idx) => (
                         <div
                             key={idx}
-                            className="bg-gradient-to-br from-[#2C2C2C] to-[#1a1a1a] border border-slate-700/50 rounded-xl overflow-hidden hover:border-emerald-500/30 hover:shadow-xl transition-all group"
+                            className="bg-gradient-to-br from-[#2C2C2C] to-[#1a1a1a] border border-slate-700/50 rounded-xl overflow-hidden hover:border-emerald-500/30 transition-all group card-lift hover-glow-emerald"
                         >
                             <div className={`h-2 bg-gradient-to-r ${project.gradient}`} />
                             <div className="p-8 md:p-10">
@@ -41,7 +41,7 @@ export const ProjectsSection = ({ sectionsRef, setCursorVariant }: ProjectsSecti
                                         rel="noopener noreferrer"
                                         onMouseEnter={() => setCursorVariant('hover')}
                                         onMouseLeave={() => setCursorVariant('default')}
-                                        className="flex-shrink-0 flex items-center gap-2 px-3 sm:px-5 py-2 sm:py-2.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-semibold transition-all hover:shadow-lg hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-400 group/btn cursor-pointer"
+                                        className="spring-button flex-shrink-0 flex items-center gap-2 px-3 sm:px-5 py-2 sm:py-2.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-semibold transition-all hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-emerald-400 group/btn cursor-pointer"
                                         aria-label={`View ${project.title} source code on GitHub`}
                                     >
                                         <Github className="w-4 h-4" aria-hidden="true" />

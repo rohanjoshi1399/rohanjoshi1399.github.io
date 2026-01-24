@@ -22,11 +22,11 @@ export const EducationSection = ({ sectionsRef }: EducationSectionProps) => {
                     <h2 id="education-heading" className="text-3xl md:text-4xl font-bold text-white">Education</h2>
                 </div>
 
-                <div className="space-y-6">
+                <div className="space-y-6 stagger-children">
                     {education.map((edu, idx) => (
                         <div
                             key={idx}
-                            className="bg-gradient-to-br from-[#2C2C2C] to-[#1a1a1a] rounded-xl p-8 shadow-xl border border-slate-700/50 hover:border-purple-500/30 transition-all"
+                            className="bg-gradient-to-br from-[#2C2C2C] to-[#1a1a1a] rounded-xl p-8 shadow-xl border border-slate-700/50 hover:border-purple-500/30 transition-all card-lift hover-glow-purple"
                         >
                             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
                                 <div className="flex-1">

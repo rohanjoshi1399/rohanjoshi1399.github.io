@@ -44,7 +44,7 @@ export const ContactSection = ({ sectionsRef, setCursorVariant }: ContactSection
                                 rel={contact.href.startsWith('http') ? "noopener noreferrer" : undefined}
                                 onMouseEnter={() => setCursorVariant('hover')}
                                 onMouseLeave={() => setCursorVariant('default')}
-                                className="flex items-center justify-between gap-4 p-6 bg-gradient-to-br from-[#2C2C2C] to-[#1a1a1a] border border-slate-700/50 rounded-xl hover:border-cyan-500/30 hover:shadow-xl transition-all hover:scale-105 group focus:outline-none focus:ring-2 focus:ring-cyan-400 cursor-pointer"
+                                className="spring-button flex items-center justify-between gap-4 p-6 bg-gradient-to-br from-[#2C2C2C] to-[#1a1a1a] border border-slate-700/50 rounded-xl hover:border-cyan-500/30 transition-all group focus:outline-none focus:ring-2 focus:ring-cyan-400 cursor-pointer hover-glow"
                             >
                                 <div className="flex items-center gap-4 flex-1">
                                     <div className={`w-14 h-14 bg-gradient-to-br ${contact.gradient} rounded-lg flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>

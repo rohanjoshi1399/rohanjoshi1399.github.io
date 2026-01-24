@@ -43,7 +43,7 @@ export const GallerySection = ({
                     </div>
                 </div>
 
-                <div className="space-y-6">
+                <div className="space-y-6 stagger-children">
                     {galleryPhotos.map((photo) => (
                         <div
                             key={photo.id}
@@ -59,7 +59,7 @@ export const GallerySection = ({
                             aria-label={`View ${photo.title} in lightbox`}
                             onMouseEnter={() => setCursorVariant('hover')}
                             onMouseLeave={() => setCursorVariant('default')}
-                            className="gallery-item relative w-full aspect-[21/9] rounded-xl overflow-hidden bg-slate-800 group cursor-pointer shadow-2xl hover:shadow-purple-500/20 focus-visible:shadow-purple-500/30 transition-all"
+                            className="gallery-item relative w-full aspect-[21/9] rounded-xl overflow-hidden bg-slate-800 group cursor-pointer shadow-2xl hover:shadow-purple-500/20 focus-visible:shadow-purple-500/30 transition-all card-lift hover-glow-purple"
                         >
                             <div className="absolute inset-0 bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 flex items-center justify-center">
                                 <Image

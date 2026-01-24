@@ -27,7 +27,7 @@ export const ExperienceSection = ({ sectionsRef }: ExperienceSectionProps) => {
                     {/* Vertical Timeline Line */}
                     <div className="absolute left-8 md:left-12 top-0 bottom-0 w-0.5 bg-gradient-to-b from-blue-500 via-cyan-500 to-transparent" />
 
-                    <div className="space-y-8">
+                    <div className="space-y-8 stagger-children">
                         {experience.map((exp, idx) => (
                             <div
                                 key={idx}
@@ -38,7 +38,7 @@ export const ExperienceSection = ({ sectionsRef }: ExperienceSectionProps) => {
                                     <div className="absolute inset-0 rounded-full bg-blue-400 animate-ping opacity-20"></div>
                                 </div>
 
-                                <div className="bg-gradient-to-br from-[#2C2C2C] to-[#1a1a1a] rounded-xl p-8 shadow-xl border border-slate-700/50 hover:border-blue-500/30 transition-all">
+                                <div className="bg-gradient-to-br from-[#2C2C2C] to-[#1a1a1a] rounded-xl p-8 shadow-xl border border-slate-700/50 hover:border-blue-500/30 transition-all card-lift hover-glow">
                                     <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
                                         <div className="flex-1">
                                             <h3 className="text-xl md:text-2xl font-bold text-white mb-2">{exp.title}</h3>

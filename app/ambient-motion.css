@@ -1,0 +1,438 @@
+/* ------------------------------------------------
+   1. AURORA BACKGROUND EFFECT
+   Animated gradient that creates depth
+   ------------------------------------------------ */
+.aurora-background {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.aurora-background::before,
+.aurora-background::after {
+    content: '';
+    position: absolute;
+    width: 150%;
+    height: 150%;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.15;
+    animation: aurora-drift 15s ease-in-out infinite;
+}
+
+.aurora-background::before {
+    background: linear-gradient(135deg, #06B6D4 0%, #3B82F6 50%, #8B5CF6 100%);
+    top: -50%;
+    left: -25%;
+    animation-delay: 0s;
+}
+
+.aurora-background::after {
+    background: linear-gradient(225deg, #10B981 0%, #06B6D4 50%, #3B82F6 100%);
+    bottom: -50%;
+    right: -25%;
+    animation-delay: -7.5s;
+}
+
+@keyframes aurora-drift {
+
+    0%,
+    100% {
+        transform: translate(0, 0) rotate(0deg) scale(1);
+    }
+
+    25% {
+        transform: translate(5%, 5%) rotate(2deg) scale(1.02);
+    }
+
+    50% {
+        transform: translate(-3%, 3%) rotate(-1deg) scale(0.98);
+    }
+
+    75% {
+        transform: translate(3%, -5%) rotate(1deg) scale(1.01);
+    }
+}
+
+/* ------------------------------------------------
+   2. SPRING PHYSICS FOR BUTTONS
+   Subtle bounce effect on interaction
+   ------------------------------------------------ */
+.spring-button {
+    transition:
+        transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+        box-shadow 0.3s ease,
+        background-color 0.2s ease;
+}
+
+.spring-button:hover {
+    transform: translateY(-2px) scale(1.02);
+}
+
+.spring-button:active {
+    transform: translateY(1px) scale(0.98);
+    transition-duration: 0.1s;
+}
+
+/* Global button spring physics */
+button,
+a[role="button"],
+.btn {
+    transition:
+        transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+        box-shadow 0.3s ease,
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease;
+}
+
+/* ------------------------------------------------
+   3. STAGGERED ENTRANCE ANIMATIONS
+   Sequential fade-in for lists and grids
+   ------------------------------------------------ */
+@keyframes fade-in-up {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fade-in-scale {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Stagger container - children animate sequentially */
+.stagger-children>* {
+    animation: fade-in-up 0.5s ease-out forwards;
+    opacity: 0;
+}
+
+.stagger-children>*:nth-child(1) {
+    animation-delay: 0.05s;
+}
+
+.stagger-children>*:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.stagger-children>*:nth-child(3) {
+    animation-delay: 0.15s;
+}
+
+.stagger-children>*:nth-child(4) {
+    animation-delay: 0.2s;
+}
+
+.stagger-children>*:nth-child(5) {
+    animation-delay: 0.25s;
+}
+
+.stagger-children>*:nth-child(6) {
+    animation-delay: 0.3s;
+}
+
+.stagger-children>*:nth-child(7) {
+    animation-delay: 0.35s;
+}
+
+.stagger-children>*:nth-child(8) {
+    animation-delay: 0.4s;
+}
+
+.stagger-children>*:nth-child(9) {
+    animation-delay: 0.45s;
+}
+
+.stagger-children>*:nth-child(10) {
+    animation-delay: 0.5s;
+}
+
+.stagger-children>*:nth-child(n+11) {
+    animation-delay: 0.55s;
+}
+
+/* Skill tags stagger - faster for small items */
+.stagger-tags>* {
+    animation: fade-in-scale 0.3s ease-out forwards;
+    opacity: 0;
+}
+
+.stagger-tags>*:nth-child(1) {
+    animation-delay: 0.02s;
+}
+
+.stagger-tags>*:nth-child(2) {
+    animation-delay: 0.04s;
+}
+
+.stagger-tags>*:nth-child(3) {
+    animation-delay: 0.06s;
+}
+
+.stagger-tags>*:nth-child(4) {
+    animation-delay: 0.08s;
+}
+
+.stagger-tags>*:nth-child(5) {
+    animation-delay: 0.1s;
+}
+
+.stagger-tags>*:nth-child(6) {
+    animation-delay: 0.12s;
+}
+
+.stagger-tags>*:nth-child(7) {
+    animation-delay: 0.14s;
+}
+
+.stagger-tags>*:nth-child(8) {
+    animation-delay: 0.16s;
+}
+
+.stagger-tags>*:nth-child(n+9) {
+    animation-delay: 0.18s;
+}
+
+/* ------------------------------------------------
+   4. HOVER GLOW EFFECTS
+   Subtle luminosity on interactive elements
+   ------------------------------------------------ */
+.hover-glow {
+    transition: box-shadow 0.3s ease;
+}
+
+.hover-glow:hover {
+    box-shadow:
+        0 0 20px rgba(6, 182, 212, 0.15),
+        0 0 40px rgba(6, 182, 212, 0.05);
+}
+
+.hover-glow-purple:hover {
+    box-shadow:
+        0 0 20px rgba(168, 85, 247, 0.15),
+        0 0 40px rgba(168, 85, 247, 0.05);
+}
+
+.hover-glow-emerald:hover {
+    box-shadow:
+        0 0 20px rgba(16, 185, 129, 0.15),
+        0 0 40px rgba(16, 185, 129, 0.05);
+}
+
+/* ------------------------------------------------
+   5. CARD LIFT EFFECT
+   Premium elevation on hover
+   ------------------------------------------------ */
+.card-lift {
+    transition:
+        transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+        box-shadow 0.3s ease;
+}
+
+.card-lift:hover {
+    transform: translateY(-4px);
+    box-shadow:
+        0 20px 40px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(6, 182, 212, 0.1);
+}
+
+/* ------------------------------------------------
+   6. SMOOTH SECTION TRANSITIONS
+   For scroll-triggered reveals
+   ------------------------------------------------ */
+.section-reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition:
+        opacity 0.6s ease-out,
+        transform 0.6s ease-out;
+}
+
+.section-reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ------------------------------------------------
+   7. REDUCED MOTION OVERRIDE
+   Respect user preferences
+   ------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+
+    .aurora-background::before,
+    .aurora-background::after {
+        animation: none;
+    }
+
+    .stagger-children>*,
+    .stagger-tags>* {
+        animation: none;
+        opacity: 1;
+    }
+
+    .spring-button,
+    .card-lift,
+    .section-reveal {
+        transition: none;
+        transform: none;
+    }
+
+    .beam,
+    .moving-border-gradient {
+        animation: none;
+    }
+}
+
+/* ------------------------------------------------
+   8. BACKGROUND BEAMS
+   Animated SVG path strokes
+   ------------------------------------------------ */
+.beam {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: beam-flow 8s ease-in-out infinite;
+    will-change: stroke-dashoffset;
+}
+
+.beam-1 {
+    animation-delay: 0s;
+}
+
+.beam-2 {
+    animation-delay: 1.5s;
+}
+
+.beam-3 {
+    animation-delay: 3s;
+}
+
+.beam-4 {
+    animation-delay: 4.5s;
+}
+
+.beam-5 {
+    animation-delay: 6s;
+}
+
+@keyframes beam-flow {
+    0% {
+        stroke-dashoffset: 1000;
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 1;
+    }
+
+    50% {
+        stroke-dashoffset: 0;
+    }
+
+    90% {
+        opacity: 1;
+    }
+
+    100% {
+        stroke-dashoffset: -1000;
+        opacity: 0;
+    }
+}
+
+/* ------------------------------------------------
+   9. MOVING BORDER
+   Rotating conic-gradient border
+   ------------------------------------------------ */
+@property --border-angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+}
+
+.moving-border-gradient {
+    background: conic-gradient(from var(--border-angle),
+            transparent 0%,
+            #06B6D4 10%,
+            #8B5CF6 30%,
+            #06B6D4 50%,
+            transparent 60%,
+            transparent 100%);
+    animation: border-rotate 3s linear infinite;
+}
+
+@keyframes border-rotate {
+    from {
+        --border-angle: 0deg;
+    }
+
+    to {
+        --border-angle: 360deg;
+    }
+}
+
+/* Fallback for browsers without @property support */
+@supports not (background: conic-gradient(from 0deg, red, blue)) {
+    .moving-border-gradient {
+        background: linear-gradient(90deg, #06B6D4, #8B5CF6, #06B6D4);
+        background-size: 200% 100%;
+        animation: border-shimmer 2s linear infinite;
+    }
+
+    @keyframes border-shimmer {
+        0% {
+            background-position: 200% 0;
+        }
+
+        100% {
+            background-position: -200% 0;
+        }
+    }
+}
+
+/* ------------------------------------------------
+   10. LIGHTBOX ANIMATIONS
+   Smooth modal enter/exit
+   ------------------------------------------------ */
+@keyframes lightbox-backdrop-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes lightbox-content-in {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.lightbox-backdrop {
+    animation: lightbox-backdrop-in 0.2s ease-out forwards;
+}
+
+.lightbox-content {
+    animation: lightbox-content-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}

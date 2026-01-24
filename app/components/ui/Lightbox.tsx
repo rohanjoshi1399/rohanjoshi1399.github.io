@@ -13,7 +13,7 @@ interface LightboxProps {
 export const Lightbox = ({ lightboxImage, onClose, onNavigate }: LightboxProps) => {
     return (
         <div
-            className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4"
+            className="lightbox-backdrop fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4"
             onClick={onClose}
         >
             <button
@@ -46,7 +46,7 @@ export const Lightbox = ({ lightboxImage, onClose, onNavigate }: LightboxProps) 
                 <ChevronRight className="w-6 h-6" />
             </button>
 
-            <div className="max-w-6xl w-full" onClick={(e) => e.stopPropagation()}>
+            <div className="lightbox-content max-w-6xl w-full" onClick={(e) => e.stopPropagation()}>
                 <div className="relative aspect-[21/9] rounded-xl overflow-hidden bg-slate-900 shadow-2xl">
                     <div className="absolute inset-0 bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 flex items-center justify-center">
                         <Image
