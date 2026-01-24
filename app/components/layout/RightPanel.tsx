@@ -152,23 +152,31 @@ export const RightPanel = ({
                                         className={`flex items-center gap-2 p-2 rounded transition-all duration-200 ${isActive ? 'bg-[#1473E6] shadow-lg' : 'hover:bg-[#3C3C3C]'
                                             } ${isHidden ? 'opacity-50' : 'opacity-100'}`}
                                     >
-                                        <button
+                                        <div
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 onToggleVisibility(section.id);
                                             }}
                                             onMouseEnter={() => setCursorVariant('hover')}
                                             onMouseLeave={() => setCursorVariant('default')}
-                                            className="cursor-pointer hover:text-cyan-400 transition-colors"
+                                            className="cursor-pointer hover:text-cyan-400 transition-colors hover:bg-[#3C3C3C] rounded flex items-center justify-center w-12 flex-shrink-0 self-stretch"
+                                            role="button"
                                             aria-label={isHidden ? `Show ${section.label}` : `Hide ${section.label}`}
                                             title={isHidden ? `Show ${section.label}` : `Hide ${section.label}`}
+                                            tabIndex={0}
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter' || e.key === ' ') {
+                                                    e.preventDefault();
+                                                    onToggleVisibility(section.id);
+                                                }
+                                            }}
                                         >
                                             {isHidden ? (
                                                 <EyeOff className="w-4 h-4 text-slate-500" aria-hidden="true" />
                                             ) : (
                                                 <Eye className="w-4 h-4 text-slate-400" aria-hidden="true" />
                                             )}
-                                        </button>
+                                        </div>
                                         <div
                                             className="flex items-center gap-2 flex-1 cursor-pointer group"
                                             onClick={() => scrollToSection(section.id)}
