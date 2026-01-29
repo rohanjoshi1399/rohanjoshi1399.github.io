@@ -21,21 +21,28 @@ export interface Education {
   current: boolean;
 }
 
+export interface Project {
+  title: string;
+  problem: string;
+  solution: string;
+  impact: string[];
+  highlight: string;
+  tech: string[];
+  github: string;
+  gradient: string;
+}
+
 export interface Experience {
   title: string;
   company: string;
   location: string;
   period: string;
-  achievements: string[];
+  challenge?: string;
+  solution: string;
+  impact: string[];
+  technical?: string;
+  achievements: string[];  // Keep for backward compatibility if needed
   tech: string[];
-}
-
-export interface Project {
-  title: string;
-  description: string;
-  tech: string[];
-  github: string;
-  gradient: string;
 }
 
 export interface SkillCategory {
@@ -64,7 +71,7 @@ export interface Section {
   label: string;
   icon: 'user' | 'graduation-cap' | 'briefcase' | 'code' | 'mail';
   color: string;
-} 
+}
 
 export interface GalleryPhoto {
   id: number;

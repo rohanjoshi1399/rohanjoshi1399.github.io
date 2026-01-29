@@ -23,15 +23,16 @@ export const ProjectsSection = ({ sectionsRef, setCursorVariant }: ProjectsSecti
                     <h2 id="projects-heading" className="text-3xl md:text-4xl font-bold text-white">Featured Projects</h2>
                 </div>
 
-                <div className="space-y-6 stagger-children">
+                <div className="space-y-8 stagger-children">
                     {projects.map((project, idx) => (
                         <div
                             key={idx}
                             className="bg-gradient-to-br from-[#2C2C2C] to-[#1a1a1a] border border-slate-700/50 rounded-xl overflow-hidden hover:border-emerald-500/30 transition-all group card-lift hover-glow-emerald"
                         >
                             <div className={`h-2 bg-gradient-to-r ${project.gradient}`} />
-                            <div className="p-8 md:p-10">
-                                <div className="flex flex-row items-start justify-between gap-4 mb-6">
+                            <div className="p-8 md:p-10 space-y-6">
+                                {/* Header */}
+                                <div className="flex flex-row items-start justify-between gap-4">
                                     <h3 className="text-xl md:text-2xl font-bold text-white group-hover:text-emerald-400 transition-colors flex-1">
                                         {project.title}
                                     </h3>
@@ -50,11 +51,49 @@ export const ProjectsSection = ({ sectionsRef, setCursorVariant }: ProjectsSecti
                                     </a>
                                 </div>
 
-                                <p className="text-slate-300 text-sm md:text-base leading-relaxed mb-6">
-                                    {project.description}
-                                </p>
+                                {/* The Problem */}
+                                <div>
+                                    <h4 className="text-lg font-semibold text-emerald-400 mb-2">The Problem</h4>
+                                    <p className="text-slate-300 text-sm md:text-base leading-relaxed">
+                                        {project.problem}
+                                    </p>
+                                </div>
 
-                                <div className="flex flex-wrap gap-2">
+                                {/* What I Built */}
+                                <div>
+                                    <h4 className="text-lg font-semibold text-blue-400 mb-2">What I Built</h4>
+                                    <p className="text-slate-300 text-sm md:text-base leading-relaxed">
+                                        {project.solution}
+                                    </p>
+                                </div>
+
+                                {/* Who It Helps / Where It Matters */}
+                                <div>
+                                    <h4 className="text-lg font-semibold text-purple-400 mb-3">
+                                        {project.title.includes("Chorus") ? "Who It Helps" : "Where It Matters"}
+                                    </h4>
+                                    <ul className="space-y-2">
+                                        {project.impact.map((item, i) => (
+                                            <li key={i} className="flex items-start gap-3 text-sm md:text-base text-slate-300">
+                                                <span className="text-cyan-400 mt-0.5">•</span>
+                                                <span>{item}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+
+                                {/* The Cool Part / The Numbers */}
+                                <div className="bg-slate-800/30 border border-slate-700/50 rounded-lg p-4">
+                                    <h4 className="text-base font-semibold text-cyan-400 mb-2">
+                                        {project.title.includes("Chorus") ? "The Cool Part" : "The Numbers"}
+                                    </h4>
+                                    <p className="text-slate-300 text-sm md:text-base leading-relaxed">
+                                        {project.highlight}
+                                    </p>
+                                </div>
+
+                                {/* Tech Stack */}
+                                <div className="flex flex-wrap gap-2 pt-4 border-t border-slate-700/50">
                                     {project.tech.map((tech, i) => (
                                         <span
                                             key={i}

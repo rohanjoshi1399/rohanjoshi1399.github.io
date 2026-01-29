@@ -39,6 +39,7 @@ export const ExperienceSection = ({ sectionsRef }: ExperienceSectionProps) => {
                                 </div>
 
                                 <div className="bg-gradient-to-br from-[#2C2C2C] to-[#1a1a1a] rounded-xl p-8 shadow-xl border border-slate-700/50 hover:border-blue-500/30 transition-all card-lift hover-glow">
+                                    {/* Header */}
                                     <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
                                         <div className="flex-1">
                                             <h3 className="text-xl md:text-2xl font-bold text-white mb-2">{exp.title}</h3>
@@ -56,7 +57,57 @@ export const ExperienceSection = ({ sectionsRef }: ExperienceSectionProps) => {
                                         </div>
                                     </div>
 
+                                    {/* Structured Content for Software Engineer II */}
+                                    {exp.challenge && (
+                                        <div className="space-y-6 mb-6">
+                                            {/* The Challenge */}
+                                            <div>
+                                                <h4 className="text-lg font-semibold text-blue-400 mb-2">The Challenge</h4>
+                                                <p className="text-slate-300 text-sm md:text-base leading-relaxed">
+                                                    {exp.challenge}
+                                                </p>
+                                            </div>
+
+                                            {/* What I Built */}
+                                            <div>
+                                                <h4 className="text-lg font-semibold text-emerald-400 mb-2">What I Built</h4>
+                                                <p className="text-slate-300 text-sm md:text-base leading-relaxed">
+                                                    {exp.solution}
+                                                </p>
+                                            </div>
+
+                                            {/* The Impact */}
+                                            {exp.impact.length > 0 && (
+                                                <div>
+                                                    <h4 className="text-lg font-semibold text-purple-400 mb-3">The Impact</h4>
+                                                    <ul className="space-y-2">
+                                                        {exp.impact.map((item, i) => (
+                                                            <li key={i} className="flex items-start gap-3 text-sm md:text-base text-slate-300">
+                                                                <span className="text-cyan-400 mt-0.5">•</span>
+                                                                <span>{item}</span>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            )}
+
+                                            {/* The Technical Part */}
+                                            {exp.technical && (
+                                                <div className="bg-slate-800/30 border border-slate-700/50 rounded-lg p-4">
+                                                    <h4 className="text-base font-semibold text-cyan-400 mb-2">The Tricky Bit</h4>
+                                                    <p className="text-slate-300 text-sm md:text-base leading-relaxed">
+                                                        {exp.technical}
+                                                    </p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {/* Key Projects/Achievements */}
                                     <div className="mb-6">
+                                        <h4 className="text-base font-semibold text-slate-400 mb-3">
+                                            {exp.challenge ? "Key Projects" : "Key Achievements"}
+                                        </h4>
                                         <ul className="space-y-3">
                                             {exp.achievements.map((achievement, i) => (
                                                 <li key={i} className="flex items-start gap-3 text-sm md:text-base text-slate-300 leading-relaxed">
@@ -67,6 +118,7 @@ export const ExperienceSection = ({ sectionsRef }: ExperienceSectionProps) => {
                                         </ul>
                                     </div>
 
+                                    {/* Tech Stack */}
                                     <div className="flex flex-wrap gap-2 pt-6 border-t border-slate-700/50">
                                         {exp.tech.map((tech, i) => (
                                             <span
