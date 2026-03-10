@@ -42,7 +42,7 @@ export default function RootLayout({
         {children}
 
         <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-G-T5610SDMCK"
+          src="https://www.googletagmanager.com/gtag/js?id=G-T5610SDMCK"
           strategy="afterInteractive"
         />
 
@@ -51,7 +51,7 @@ export default function RootLayout({
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', 'G-G-T5610SDMCK');
+            gtag('config', 'G-T5610SDMCK');
           `}
         </Script>
 
