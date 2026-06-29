@@ -8,7 +8,7 @@ interface FooterProps {
 
 export const Footer = ({ activeSection }: FooterProps) => {
     return (
-        <footer className="bg-[#323232] border-t border-black/30 px-4 py-2 flex items-center justify-between text-xs text-slate-400">
+        <footer className="bg-[#323232] border-t border-black/30 px-4 py-2 flex items-center justify-between text-xs text-slate-400 font-mono">
             <div className="flex items-center gap-3">
                 <span className="text-slate-300 font-medium">{personalInfo.name} - Software Engineer</span>
                 <div className="h-3 w-px bg-slate-600 hidden sm:block" aria-hidden="true" />

@@ -14,13 +14,12 @@ export const ProjectsSection = ({ sectionsRef, setCursorVariant }: ProjectsSecti
             id="projects"
             ref={(el) => { sectionsRef.current['projects'] = el; }}
             className="scroll-mt-4"
-            style={{ filter: 'brightness(1.05) saturate(1.15)', mixBlendMode: 'normal' }}
             aria-labelledby="projects-heading"
         >
             <div className="space-y-8">
                 <div className="flex items-center gap-3 mb-6">
                     <Code className="w-7 h-7 text-emerald-400" aria-hidden="true" />
-                    <h2 id="projects-heading" className="text-3xl md:text-4xl font-bold text-white">Featured Projects</h2>
+                    <h2 id="projects-heading" className="text-3xl md:text-4xl font-bold text-white font-mono">Featured Projects</h2>
                 </div>
 
                 <div className="space-y-8 stagger-children">
@@ -33,9 +32,16 @@ export const ProjectsSection = ({ sectionsRef, setCursorVariant }: ProjectsSecti
                             <div className="p-8 md:p-10 space-y-6">
                                 {/* Header */}
                                 <div className="flex flex-row items-start justify-between gap-4">
-                                    <h3 className="text-xl md:text-2xl font-bold text-white group-hover:text-emerald-400 transition-colors flex-1">
-                                        {project.title}
-                                    </h3>
+                                    <div className="flex-1 flex flex-wrap items-center gap-3">
+                                        <h3 className="text-xl md:text-2xl font-bold text-white group-hover:text-emerald-400 transition-colors">
+                                            {project.title}
+                                        </h3>
+                                        {project.status && (
+                                            <span className="flex-shrink-0 px-3 py-1 bg-cyan-500/15 text-cyan-300 text-[11px] font-bold rounded-full border border-cyan-500/30 uppercase tracking-wide font-mono">
+                                                {project.status}
+                                            </span>
+                                        )}
+                                    </div>
                                     <a
                                         href={project.github}
                                         target="_blank"
@@ -70,7 +76,7 @@ export const ProjectsSection = ({ sectionsRef, setCursorVariant }: ProjectsSecti
                                 {/* Who It Helps / Where It Matters */}
                                 <div>
                                     <h4 className="text-lg font-semibold text-purple-400 mb-3">
-                                        {project.title.includes("Chorus") ? "Who It Helps" : "Where It Matters"}
+                                        {project.impactLabel ?? "Where It Matters"}
                                     </h4>
                                     <ul className="space-y-2">
                                         {project.impact.map((item, i) => (
@@ -85,7 +91,7 @@ export const ProjectsSection = ({ sectionsRef, setCursorVariant }: ProjectsSecti
                                 {/* The Cool Part / The Numbers */}
                                 <div className="bg-slate-800/30 border border-slate-700/50 rounded-lg p-4">
                                     <h4 className="text-base font-semibold text-cyan-400 mb-2">
-                                        {project.title.includes("Chorus") ? "The Cool Part" : "The Numbers"}
+                                        {project.highlightLabel ?? "The Numbers"}
                                     </h4>
                                     <p className="text-slate-300 text-sm md:text-base leading-relaxed">
                                         {project.highlight}

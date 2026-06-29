@@ -63,7 +63,7 @@ export const Lightbox = ({ lightboxImage, onClose, onNavigate }: LightboxProps) 
                 <div className="mt-6 text-center">
                     <h3 className="text-white text-2xl font-bold mb-2">{lightboxImage.title}</h3>
                     <p className="text-slate-400 text-base">{lightboxImage.caption}</p>
-                    <p className="text-slate-500 text-sm mt-3">
+                    <p className="text-slate-400 text-sm mt-3">
                         Click arrows or use <kbd className="px-2 py-1 bg-slate-800 rounded text-cyan-400">←</kbd> <kbd className="px-2 py-1 bg-slate-800 rounded text-cyan-400">→</kbd> keys to navigate
                     </p>
                 </div>

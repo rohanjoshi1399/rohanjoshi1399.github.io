@@ -1,9 +1,8 @@
 "use client";
 
-import { Code, MapPin, Mail, Calendar } from 'lucide-react';
+import { Code, MapPin, Mail, Calendar, FileText } from 'lucide-react';
 import Image from 'next/image';
 import { personalInfo, skillCategories } from '@/data';
-import { BackgroundBeams } from '../ui/BackgroundBeams';
 import { MovingBorder } from '../ui/MovingBorder';
 import { Spotlight } from '../ui/Spotlight';
 
@@ -30,7 +29,6 @@ export const AboutSection = ({ sectionsRef, scrollToSection, setCursorVariant }:
             id="about"
             ref={(el) => { sectionsRef.current['about'] = el; }}
             className="scroll-mt-4"
-            style={{ filter: 'brightness(1.05) contrast(1.02)' }}
             aria-labelledby="about-heading"
         >
             <div className="space-y-8">
@@ -41,10 +39,6 @@ export const AboutSection = ({ sectionsRef, scrollToSection, setCursorVariant }:
                     spotlightSize={500}
                 >
                     <div className="relative bg-gradient-to-br from-[#2C2C2C] to-[#1a1a1a] p-8 md:p-10 border border-slate-700/50 shadow-2xl card-lift rounded-xl">
-                        {/* Background Effects Layer */}
-                        <BackgroundBeams className="opacity-40" />
-                        <div className="aurora-background" aria-hidden="true" />
-
                         <div className="relative z-10 flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8 mb-8">
                             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 flex-1">
                                 {/* Profile Picture */}
@@ -70,8 +64,11 @@ export const AboutSection = ({ sectionsRef, scrollToSection, setCursorVariant }:
                                     <h1 id="about-heading" className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-white tracking-tight leading-tight">
                                         {personalInfo.name}
                                     </h1>
-                                    <p className="text-lg md:text-xl text-cyan-400 font-semibold mb-6">
+                                    <p className="text-lg md:text-xl text-cyan-400 font-semibold mb-3">
                                         {personalInfo.title}
+                                    </p>
+                                    <p className="text-base md:text-lg text-slate-400 mb-6 max-w-xl">
+                                        I love building new things; these days that&apos;s AI systems: RAG, multi-agent architectures and distributed backends.
                                     </p>
 
                                     <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 text-sm lg:text-base">
@@ -89,11 +86,15 @@ export const AboutSection = ({ sectionsRef, scrollToSection, setCursorVariant }:
                                                 {personalInfo.email}
                                             </a>
                                         </div>
-                                        <div className="h-4 w-px bg-slate-600 hidden sm:block" aria-hidden="true" />
-                                        <div className="flex items-center gap-2 text-emerald-400 font-medium">
-                                            <Calendar className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
-                                            <span>{personalInfo.availability}</span>
-                                        </div>
+                                        {personalInfo.availability && (
+                                            <>
+                                                <div className="h-4 w-px bg-slate-600 hidden sm:block" aria-hidden="true" />
+                                                <div className="flex items-center gap-2 text-emerald-400 font-medium">
+                                                    <Calendar className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+                                                    <span>{personalInfo.availability}</span>
+                                                </div>
+                                            </>
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -112,10 +113,21 @@ export const AboutSection = ({ sectionsRef, scrollToSection, setCursorVariant }:
                                     <Mail className="w-4 h-4" aria-hidden="true" />
                                     Get In Touch
                                 </MovingBorder>
+                                <a
+                                    href="/resume.pdf"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    onMouseEnter={() => setCursorVariant('hover')}
+                                    onMouseLeave={() => setCursorVariant('default')}
+                                    className="flex items-center justify-center gap-2 px-6 py-3 border border-slate-600 bg-slate-800/50 hover:bg-slate-700/50 hover:border-slate-500 text-slate-200 font-semibold rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-cyan-500/50"
+                                >
+                                    <FileText className="w-4 h-4" aria-hidden="true" />
+                                    Résumé
+                                </a>
                             </div>
                         </div>
 
-                        <p className="relative z-10 text-slate-300 text-sm md:text-base leading-relaxed border-t border-slate-700 pt-8">
+                        <p className="relative z-10 text-slate-300 text-base md:text-lg leading-relaxed border-t border-slate-700 pt-8">
                             {personalInfo.summary}
                         </p>
                     </div>

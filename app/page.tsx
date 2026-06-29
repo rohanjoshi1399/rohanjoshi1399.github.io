@@ -14,6 +14,7 @@ import { CustomCursor } from './components/ui/CustomCursor';
 import { Lightbox } from './components/ui/Lightbox';
 import { BackToTop } from './components/ui/BackToTop';
 import { MobilePanel } from './components/ui/MobilePanel';
+import { MobileToolBar } from './components/ui/MobileToolBar';
 
 // Layout Components
 import { TopBar } from './components/layout/TopBar';
@@ -42,15 +43,17 @@ const Portfolio = () => {
   const [navigationHistory, setNavigationHistory] = useState(['about']);
   const [selectedTool, setSelectedTool] = useState('pointer');
   const [hiddenSections, setHiddenSections] = useState<Set<string>>(new Set());
+  const [announcement, setAnnouncement] = useState('');
+  const [mobileLayersOpen, setMobileLayersOpen] = useState(false);
 
   const sectionsRef = useRef<{ [key: string]: HTMLElement | null }>({});
   const mainContentRef = useRef<HTMLDivElement | null>(null);
 
   const sections = [
     { id: 'about', label: 'About', icon: User },
-    { id: 'education', label: 'Education', icon: GraduationCap },
     { id: 'experience', label: 'Experience', icon: Briefcase },
     { id: 'projects', label: 'Projects', icon: Code },
+    { id: 'education', label: 'Education', icon: GraduationCap },
     { id: 'gallery', label: 'Gallery', icon: Camera },
     { id: 'contact', label: 'Contact', icon: Mail }
   ];
@@ -155,6 +158,49 @@ const Portfolio = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [lightboxOpen, lightboxImage?.id, activeSection]);
 
+  // Touch swipe navigation between sections (mobile) — mirrors the arrow-key nav
+  useEffect(() => {
+    const main = mainContentRef.current;
+    if (!main) return;
+
+    let startX = 0;
+    let startY = 0;
+    let startTime = 0;
+
+    const onTouchStart = (e: TouchEvent) => {
+      const t = e.touches[0];
+      startX = t.clientX;
+      startY = t.clientY;
+      startTime = Date.now();
+    };
+
+    const onTouchEnd = (e: TouchEvent) => {
+      if (lightboxOpen) return;
+      const t = e.changedTouches[0];
+      const dx = t.clientX - startX;
+      const dy = t.clientY - startY;
+      const elapsed = Date.now() - startTime;
+
+      // Horizontal swipe: X dominant, past threshold, and reasonably quick
+      if (Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 1.5 && elapsed < 700) {
+        const currentIndex = sections.findIndex(s => s.id === activeSection);
+        if (dx < 0 && currentIndex < sections.length - 1) {
+          scrollToSection(sections[currentIndex + 1].id); // swipe left → next
+        } else if (dx > 0 && currentIndex > 0) {
+          scrollToSection(sections[currentIndex - 1].id); // swipe right → prev
+        }
+      }
+    };
+
+    main.addEventListener('touchstart', onTouchStart, { passive: true });
+    main.addEventListener('touchend', onTouchEnd, { passive: true });
+    return () => {
+      main.removeEventListener('touchstart', onTouchStart);
+      main.removeEventListener('touchend', onTouchEnd);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeSection, lightboxOpen]);
+
   // Optimized section detection using Intersection Observer
   // Re-run when hiddenSections changes to re-observe newly visible sections
   useEffect(() => {
@@ -169,6 +215,11 @@ const Portfolio = () => {
         if (entry.isIntersecting) {
           const sectionId = entry.target.id;
           setActiveSection(sectionId);
+
+          // Reflect active section in the URL without flooding history
+          if (window.location.hash !== '#' + sectionId) {
+            history.replaceState(null, '', '#' + sectionId);
+          }
 
           setNavigationHistory(prev => {
             if (prev[prev.length - 1] === sectionId) return prev;
@@ -216,8 +267,56 @@ const Portfolio = () => {
     };
   }, [[...hiddenSections].sort()]);
 
+  // Hash-based deep-linking: scroll to the section in the URL hash on mount,
+  // and respond to back/forward navigation via popstate.
+  useEffect(() => {
+    const isValidSection = (id: string) => sections.some(s => s.id === id);
+
+    const scrollToHashSection = (sectionId: string) => {
+      sectionsRef.current[sectionId]?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    };
+
+    // On initial mount, honor an incoming hash once the DOM is ready
+    const initialHash = window.location.hash.slice(1);
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+    if (initialHash && isValidSection(initialHash)) {
+      timeoutId = setTimeout(() => scrollToHashSection(initialHash), 50);
+    }
+
+    // pushState/replaceState do not fire popstate, so this won't loop
+    const handlePopState = () => {
+      const sectionId = window.location.hash.slice(1);
+      if (sectionId && isValidSection(sectionId)) {
+        scrollToHashSection(sectionId);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => {
+      if (timeoutId !== undefined) clearTimeout(timeoutId);
+      window.removeEventListener('popstate', handlePopState);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Announce the active section to screen readers via the live region
+  useEffect(() => {
+    const section = sections.find(s => s.id === activeSection);
+    if (section) {
+      setAnnouncement(`${section.label} section`);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeSection]);
+
   const scrollToSection = (sectionId: string) => {
     setNavigationHistory(prev => [...prev, sectionId].slice(-10));
+    // Explicit navigation pushes a history entry so back/forward works
+    if (window.location.hash !== '#' + sectionId) {
+      history.pushState(null, '', '#' + sectionId);
+    }
     sectionsRef.current[sectionId]?.scrollIntoView({
       behavior: 'smooth',
       block: 'start'
@@ -253,17 +352,28 @@ const Portfolio = () => {
   const toggleSectionVisibility = (sectionId: string) => {
     setHiddenSections(prev => {
       const newSet = new Set(prev);
-      if (newSet.has(sectionId)) {
-        newSet.delete(sectionId);
-      } else {
+      const willBeHidden = !newSet.has(sectionId);
+      if (willBeHidden) {
         newSet.add(sectionId);
+      } else {
+        newSet.delete(sectionId);
       }
+      const label = sections.find(s => s.id === sectionId)?.label ?? sectionId;
+      setAnnouncement(`${label} ${willBeHidden ? 'hidden' : 'shown'}`);
       return newSet;
     });
   };
 
   return (
-    <div className="h-screen flex flex-col bg-[#535353] text-slate-200 overflow-hidden md:cursor-none">
+    <div className="h-dvh flex flex-col bg-[#535353] text-slate-200 overflow-hidden">
+      {/* Skip to content link - visually hidden until focused */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-cyan-600 focus:text-white focus:font-semibold focus:outline-none focus:ring-2 focus:ring-cyan-400"
+      >
+        Skip to content
+      </a>
+
       {/* Custom Cursor */}
       <CustomCursor
         cursorPosition={cursorPosition}
@@ -305,10 +415,11 @@ const Portfolio = () => {
         <main
           id="main-content"
           ref={mainContentRef}
+          tabIndex={-1}
           className="flex-1 bg-[#242424] overflow-y-auto scroll-smooth"
           role="main"
         >
-          <div className="max-w-6xl mx-auto px-6 py-16 md:px-8 md:py-10 space-y-18">
+          <div className="max-w-6xl mx-auto px-6 py-16 md:px-8 md:py-10 space-y-18 pb-28 md:pb-16">
             {!hiddenSections.has('about') && (
               <div className="transition-opacity duration-500">
                 <AboutSection
@@ -319,17 +430,7 @@ const Portfolio = () => {
               </div>
             )}
 
-            {!hiddenSections.has('about') && !hiddenSections.has('education') && (
-              <hr className="border-slate-700/50" aria-hidden="true" />
-            )}
-
-            {!hiddenSections.has('education') && (
-              <div className="transition-opacity duration-500">
-                <EducationSection sectionsRef={sectionsRef} />
-              </div>
-            )}
-
-            {!hiddenSections.has('education') && !hiddenSections.has('experience') && (
+            {!hiddenSections.has('about') && !hiddenSections.has('experience') && (
               <hr className="border-slate-700/50" aria-hidden="true" />
             )}
 
@@ -352,7 +453,17 @@ const Portfolio = () => {
               </div>
             )}
 
-            {!hiddenSections.has('projects') && !hiddenSections.has('gallery') && (
+            {!hiddenSections.has('projects') && !hiddenSections.has('education') && (
+              <hr className="border-slate-700/50" aria-hidden="true" />
+            )}
+
+            {!hiddenSections.has('education') && (
+              <div className="transition-opacity duration-500">
+                <EducationSection sectionsRef={sectionsRef} />
+              </div>
+            )}
+
+            {!hiddenSections.has('education') && !hiddenSections.has('gallery') && (
               <hr className="border-slate-700/50" aria-hidden="true" />
             )}
 
@@ -417,6 +528,14 @@ const Portfolio = () => {
         />
       )}
 
+      {/* Mobile Tool Bar - Primary navigation on phones */}
+      <MobileToolBar
+        sections={sections}
+        activeSection={activeSection}
+        scrollToSection={scrollToSection}
+        onOpenLayers={() => setMobileLayersOpen(true)}
+      />
+
       {/* Mobile Panel - Only visible on small screens */}
       <MobilePanel
         sections={sections}
@@ -424,7 +543,12 @@ const Portfolio = () => {
         scrollToSection={scrollToSection}
         hiddenSections={hiddenSections}
         onToggleVisibility={toggleSectionVisibility}
+        isOpen={mobileLayersOpen}
+        onClose={() => setMobileLayersOpen(false)}
       />
+
+      {/* Screen-reader announcements */}
+      <div aria-live="polite" aria-atomic="true" className="sr-only">{announcement}</div>
     </div>
   );
 };

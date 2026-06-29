@@ -13,13 +13,12 @@ export const EducationSection = ({ sectionsRef }: EducationSectionProps) => {
             id="education"
             ref={(el) => { sectionsRef.current['education'] = el; }}
             className="scroll-mt-4"
-            style={{ filter: 'brightness(1.03) saturate(1.1)' }}
             aria-labelledby="education-heading"
         >
             <div className="space-y-8">
                 <div className="flex items-center gap-3 mb-6">
                     <GraduationCap className="w-7 h-7 text-purple-400" aria-hidden="true" />
-                    <h2 id="education-heading" className="text-3xl md:text-4xl font-bold text-white">Education</h2>
+                    <h2 id="education-heading" className="text-3xl md:text-4xl font-bold text-white font-mono">Education</h2>
                 </div>
 
                 <div className="space-y-6 stagger-children">

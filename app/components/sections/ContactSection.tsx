@@ -30,7 +30,7 @@ export const ContactSection = ({ sectionsRef, setCursorVariant }: ContactSection
             <div className="space-y-8">
                 <div className="flex items-center gap-3 mb-6">
                     <Mail className="w-7 h-7 text-orange-400" aria-hidden="true" />
-                    <h2 id="contact-heading" className="text-3xl md:text-4xl font-bold text-white">Get In Touch</h2>
+                    <h2 id="contact-heading" className="text-3xl md:text-4xl font-bold text-white font-mono">Get In Touch</h2>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-5">
@@ -40,8 +40,8 @@ export const ContactSection = ({ sectionsRef, setCursorVariant }: ContactSection
                             <a
                                 key={idx}
                                 href={contact.href}
-                                target={contact.href !== '#' && contact.href.startsWith('http') ? "_blank" : undefined}
-                                rel={contact.href.startsWith('http') ? "noopener noreferrer" : undefined}
+                                target={contact.href === '#' || contact.href.startsWith('mailto:') ? undefined : "_blank"}
+                                rel={contact.href === '#' || contact.href.startsWith('mailto:') ? undefined : "noopener noreferrer"}
                                 onMouseEnter={() => setCursorVariant('hover')}
                                 onMouseLeave={() => setCursorVariant('default')}
                                 className="spring-button flex items-center justify-between gap-4 p-6 bg-gradient-to-br from-[#2C2C2C] to-[#1a1a1a] border border-slate-700/50 rounded-xl hover:border-cyan-500/30 transition-all group focus:outline-none focus:ring-2 focus:ring-cyan-400 cursor-pointer hover-glow"

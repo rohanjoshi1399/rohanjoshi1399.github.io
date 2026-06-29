@@ -22,14 +22,13 @@ export const GallerySection = ({
             id="gallery"
             ref={(el) => { sectionsRef.current['gallery'] = el; }}
             className="scroll-mt-4"
-            style={{ filter: 'brightness(1.08) contrast(1.1)' }}
             aria-labelledby="gallery-heading"
         >
             <div className="space-y-8">
                 <div className="text-center mb-12">
                     <div className="flex items-center justify-center gap-3 mb-4">
                         <Camera className="w-7 h-7 text-purple-400" aria-hidden="true" />
-                        <h2 id="gallery-heading" className="text-3xl md:text-4xl font-bold text-white">Beyond Code</h2>
+                        <h2 id="gallery-heading" className="text-3xl md:text-4xl font-bold text-white font-mono">Beyond Code</h2>
                     </div>
 
                     {/* Personal Story */}
@@ -59,7 +58,7 @@ export const GallerySection = ({
                             aria-label={`View ${photo.title} in lightbox`}
                             onMouseEnter={() => setCursorVariant('hover')}
                             onMouseLeave={() => setCursorVariant('default')}
-                            className="gallery-item relative w-full aspect-[21/9] rounded-xl overflow-hidden bg-slate-800 group cursor-pointer shadow-2xl hover:shadow-purple-500/20 focus-visible:shadow-purple-500/30 transition-all card-lift hover-glow-purple"
+                            className="gallery-item relative w-full aspect-video md:aspect-[21/9] rounded-xl overflow-hidden bg-slate-800 group cursor-pointer shadow-2xl hover:shadow-purple-500/20 focus-visible:shadow-purple-500/30 transition-all card-lift hover-glow-purple"
                         >
                             <div className="absolute inset-0 bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 flex items-center justify-center">
                                 <Image
@@ -124,7 +123,7 @@ export const GallerySection = ({
                         >
                             <div className="flex flex-col text-left">
                                 <span className="text-purple-300 font-bold text-sm">NatureInFocus 2015</span>
-                                <span className="text-slate-400 text-xs">Young Photographer — Winner</span>
+                                <span className="text-slate-400 text-xs">Young Photographer, Winner</span>
                             </div>
                             <ExternalLink className="w-4 h-4 text-purple-400 opacity-50 group-hover:opacity-100 transition-opacity" />
                         </a>
@@ -136,7 +135,7 @@ export const GallerySection = ({
                         >
                             <div className="flex flex-col text-left">
                                 <span className="text-amber-300 font-bold text-sm">NPOTY 2016</span>
-                                <span className="text-slate-400 text-xs">Category Youth — Winner</span>
+                                <span className="text-slate-400 text-xs">Category Youth, Winner</span>
                             </div>
                             <ExternalLink className="w-4 h-4 text-amber-400 opacity-50 group-hover:opacity-100 transition-opacity" />
                         </a>

@@ -30,6 +30,9 @@ export interface Project {
   tech: string[];
   github: string;
   gradient: string;
+  status?: string;          // optional badge, e.g. "In Progress", "Research"
+  impactLabel?: string;     // overrides the impact-section heading (default "Where It Matters")
+  highlightLabel?: string;  // overrides the highlight-box heading (default "The Numbers")
 }
 
 export interface Experience {

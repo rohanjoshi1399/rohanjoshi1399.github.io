@@ -13,13 +13,12 @@ export const ExperienceSection = ({ sectionsRef }: ExperienceSectionProps) => {
             id="experience"
             ref={(el) => { sectionsRef.current['experience'] = el; }}
             className="scroll-mt-4"
-            style={{ filter: 'brightness(1.04) contrast(1.05)' }}
             aria-labelledby="experience-heading"
         >
             <div className="space-y-8">
                 <div className="flex items-center gap-3 mb-6">
                     <Briefcase className="w-7 h-7 text-blue-400" aria-hidden="true" />
-                    <h2 id="experience-heading" className="text-3xl md:text-4xl font-bold text-white">Work Experience</h2>
+                    <h2 id="experience-heading" className="text-3xl md:text-4xl font-bold text-white font-mono">Work Experience</h2>
                 </div>
 
                 {/* Timeline Visualization */}

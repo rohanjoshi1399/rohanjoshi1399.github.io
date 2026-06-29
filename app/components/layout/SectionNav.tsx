@@ -16,7 +16,7 @@ interface SectionNavProps {
 export const SectionNav = ({ sections, activeSection, scrollToSection, setCursorVariant }: SectionNavProps) => {
     return (
         <nav
-            className="bg-[#2C2C2C] border-b border-black/30 flex items-center overflow-x-auto scroll-smooth snap-x snap-mandatory"
+            className="bg-[#2C2C2C] border-b border-black/30 hidden md:flex items-center overflow-x-auto scroll-smooth snap-x snap-mandatory font-mono"
             aria-label="Section navigation"
             role="tablist"
         >

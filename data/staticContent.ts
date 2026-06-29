@@ -29,8 +29,8 @@ export const contactMethods: ContactMethod[] = [
   {
     icon: "mail",
     label: "Email",
-    value: "rohan.joshi.1399@gmail.com",
-    href: "mailto:rohan.joshi.1399@gmail.com",
+    value: "joshi.rohan@northeastern.edu",
+    href: "mailto:joshi.rohan@northeastern.edu",
     gradient: "from-cyan-500 to-blue-600",
     action: "Send Email"
   },
@@ -49,15 +49,15 @@ export const contactMethods: ContactMethod[] = [
     href: "https://linkedin.com/in/therohanjoshi",
     gradient: "from-blue-600 to-blue-800",
     action: "Connect"
+  },
+  {
+    icon: "file-text",
+    label: "Resume",
+    value: "",
+    href: "/resume.pdf",
+    gradient: "from-purple-600 to-pink-600",
+    action: "View PDF"
   }
-  // {
-  //   icon: "file-text",
-  //   label: "Resume",
-  //   value: "Download my resume",
-  //   href: "#",
-  //   gradient: "from-purple-600 to-pink-600",
-  //   action: "Download PDF"
-  // }
 ];
 
 // Seeking opportunities
@@ -76,5 +76,5 @@ export const seekingOpportunities = {
 
 // Section descriptions
 export const sectionDescriptions = {
-  contact: "I'm actively looking for AI/ML Software Engineering internships for Summer 2026. If you're working on interesting problems in AI systems, distributed architectures, or backend infrastructure, I'd love to chat."
+  contact: "If you're working on interesting problems in AI systems, distributed architectures, or backend infrastructure, I'd love to chat."
 };

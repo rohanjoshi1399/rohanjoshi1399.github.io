@@ -2,6 +2,11 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "export", // Enable static HTML export for GitHub Pages
+  // Pin the workspace root to this folder. A stray lockfile in the parent
+  // directory was causing Next to infer the wrong root.
+  turbopack: {
+    root: __dirname,
+  },
   images: {
     unoptimized: true, // Required for static export (GitHub Pages doesn't support Next.js image optimization)
   },
