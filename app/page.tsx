@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import {
-  MousePointer2, Square, Circle, Type, PenTool, Eraser, Droplet,
+  MousePointer2, Square, Circle, Type, PenTool, Eraser, Droplet, EyeOff,
   User, Briefcase, Code, Mail, GraduationCap, Camera
 } from 'lucide-react';
 
@@ -32,13 +32,16 @@ import { ProjectsSection } from './components/sections/ProjectsSection';
 import { GallerySection } from './components/sections/GallerySection';
 import { ContactSection } from './components/sections/ContactSection';
 
+// Programmatic scrolls ignore CSS scroll-behavior, so honor reduced motion here too
+const scrollBehavior = (): ScrollBehavior =>
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+
 const Portfolio = () => {
   const [activeSection, setActiveSection] = useState('about');
   const [activeRightPanel, setActiveRightPanel] = useState('layers');
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxImage, setLightboxImage] = useState<GalleryPhoto | null>(null);
-  const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
   const [cursorVariant, setCursorVariant] = useState<'default' | 'hover'>('default');
   const [navigationHistory, setNavigationHistory] = useState(['about']);
   const [selectedTool, setSelectedTool] = useState('pointer');
@@ -58,17 +61,18 @@ const Portfolio = () => {
     { id: 'contact', label: 'Contact', icon: Mail }
   ];
 
+  // The palette the site actually uses (tokens live in globals.css)
   const brandColors = [
-    { name: 'Cyan Primary', hex: '#06B6D4', rgb: 'RGB(6, 182, 212)' },
-    { name: 'Blue Accent', hex: '#3B82F6', rgb: 'RGB(59, 130, 246)' },
-    { name: 'Purple Accent', hex: '#A855F7', rgb: 'RGB(168, 85, 247)' },
-    { name: 'Emerald Accent', hex: '#10B981', rgb: 'RGB(16, 185, 129)' }
+    { name: 'Selection Blue', hex: '#1473E6', rgb: 'RGB(20, 115, 230)' },
+    { name: 'Accent Blue', hex: '#4B9CF5', rgb: 'RGB(75, 156, 245)' },
+    { name: 'Status Green', hex: '#3FCF8E', rgb: 'RGB(63, 207, 142)' },
+    { name: 'Canvas', hex: '#242424', rgb: 'RGB(36, 36, 36)' }
   ];
 
   const galleryPhotos: GalleryPhoto[] = [
-    { id: 1, title: "The Chase", caption: "A lioness in pursuit of a warthog across the African savanna - Masai Mara, Kenya", src: "/static/gallery/photo1.jpg" },
-    { id: 2, title: "Unicorns in Dusk", caption: "Zebras painted against the dusky African sky - Masai Mara, Kenya", src: "/static/gallery/Zebra Silhouette.jpg" },
-    { id: 3, title: "Golden Dust Bath", caption: "An elephant showering itself in the warm glow of the setting sun - Corbett National Park, India", src: "/static/gallery/photo3.jpg" }
+    { id: 1, title: "The Chase", caption: "A lioness in pursuit of a warthog across the African savanna", location: "Masai Mara, Kenya", src: "/static/gallery/photo1.jpg" },
+    { id: 2, title: "Unicorns in Dusk", caption: "Zebras painted against the dusky African sky", location: "Masai Mara, Kenya", src: "/static/gallery/Zebra Silhouette.jpg" },
+    { id: 3, title: "Golden Dust Bath", caption: "An elephant showering itself in the warm glow of the setting sun", location: "Corbett National Park, India", src: "/static/gallery/photo3.jpg" }
   ];
 
   const tools = [
@@ -81,36 +85,17 @@ const Portfolio = () => {
     { id: 'brush', icon: Droplet, name: 'Brush Tool' }
   ];
 
-  // Custom Cursor Tracking - Optimized with RAF
-  useEffect(() => {
-    let rafId: number | null = null;
-    let lastX = 0;
-    let lastY = 0;
-
-    const handleMouseMove = (e: MouseEvent) => {
-      lastX = e.clientX;
-      lastY = e.clientY;
-
-      if (rafId === null) {
-        rafId = requestAnimationFrame(() => {
-          setCursorPosition({ x: lastX, y: lastY });
-          rafId = null;
-        });
-      }
-    };
-
-    window.addEventListener('mousemove', handleMouseMove, { passive: true });
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      if (rafId !== null) {
-        cancelAnimationFrame(rafId);
-      }
-    };
-  }, []);
-
   // Keyboard Shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Never hijack keys while the visitor is typing or using a browser/OS shortcut
+      const target = e.target as HTMLElement | null;
+      const isTyping = !!target && (
+        target.isContentEditable ||
+        ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)
+      );
+      if (isTyping || e.ctrlKey || e.metaKey || e.altKey) return;
+
       if (lightboxOpen) {
         if (e.key === 'Escape') {
           closeLightbox();
@@ -135,12 +120,13 @@ const Portfolio = () => {
 
       const currentIndex = sections.findIndex(s => s.id === activeSection);
 
-      if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+      // Up/Down are left alone so they keep scrolling the page natively
+      if (e.key === 'ArrowRight') {
         e.preventDefault();
         if (currentIndex < sections.length - 1) {
           scrollToSection(sections[currentIndex + 1].id);
         }
-      } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+      } else if (e.key === 'ArrowLeft') {
         e.preventDefault();
         if (currentIndex > 0) {
           scrollToSection(sections[currentIndex - 1].id);
@@ -202,7 +188,9 @@ const Portfolio = () => {
   }, [activeSection, lightboxOpen]);
 
   // Optimized section detection using Intersection Observer
-  // Re-run when hiddenSections changes to re-observe newly visible sections
+  // Re-run when hiddenSections changes to re-observe newly visible sections.
+  // A stable string key, so the observer isn't rebuilt on every render.
+  const hiddenSectionsKey = [...hiddenSections].sort().join(',');
   useEffect(() => {
     const observerOptions = {
       root: mainContentRef.current,
@@ -238,12 +226,27 @@ const Portfolio = () => {
       });
     }, 50);
 
+    // Back to top: always available past 500px on tablet/desktop, where it sits
+    // in the gutter. On phones it would cover body text, so it only appears
+    // while scrolling back up (the moment you'd want it) and hides while reading.
+    const phoneQuery = window.matchMedia('(max-width: 767px)');
+    let lastScrollTop = 0;
     let rafId: number | null = null;
     const handleScroll = () => {
       if (rafId === null) {
         rafId = requestAnimationFrame(() => {
           const scrollTop = mainContentRef.current?.scrollTop || 0;
-          setShowBackToTop(scrollTop > 500);
+          const delta = scrollTop - lastScrollTop;
+          lastScrollTop = scrollTop;
+          if (scrollTop <= 500) {
+            setShowBackToTop(false);
+          } else if (!phoneQuery.matches) {
+            setShowBackToTop(true);
+          } else if (delta < -4) {
+            setShowBackToTop(true);
+          } else if (delta > 4) {
+            setShowBackToTop(false);
+          }
           rafId = null;
         });
       }
@@ -265,7 +268,7 @@ const Portfolio = () => {
         cancelAnimationFrame(rafId);
       }
     };
-  }, [[...hiddenSections].sort()]);
+  }, [hiddenSectionsKey]);
 
   // Hash-based deep-linking: scroll to the section in the URL hash on mount,
   // and respond to back/forward navigation via popstate.
@@ -274,7 +277,7 @@ const Portfolio = () => {
 
     const scrollToHashSection = (sectionId: string) => {
       sectionsRef.current[sectionId]?.scrollIntoView({
-        behavior: 'smooth',
+        behavior: scrollBehavior(),
         block: 'start'
       });
     };
@@ -318,13 +321,13 @@ const Portfolio = () => {
       history.pushState(null, '', '#' + sectionId);
     }
     sectionsRef.current[sectionId]?.scrollIntoView({
-      behavior: 'smooth',
+      behavior: scrollBehavior(),
       block: 'start'
     });
   };
 
   const scrollToTop = () => {
-    mainContentRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+    mainContentRef.current?.scrollTo({ top: 0, behavior: scrollBehavior() });
   };
 
   const openLightbox = (photo: GalleryPhoto) => {
@@ -349,6 +352,11 @@ const Portfolio = () => {
     setLightboxImage(galleryPhotos[newIndex]);
   };
 
+  const showAllSections = () => {
+    setHiddenSections(new Set());
+    setAnnouncement('All layers shown');
+  };
+
   const toggleSectionVisibility = (sectionId: string) => {
     setHiddenSections(prev => {
       const newSet = new Set(prev);
@@ -369,14 +377,13 @@ const Portfolio = () => {
       {/* Skip to content link - visually hidden until focused */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-cyan-600 focus:text-white focus:font-semibold focus:outline-none focus:ring-2 focus:ring-cyan-400"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-ps-blue focus:text-white focus:font-semibold focus:outline-none focus:ring-2 focus:ring-ps-accent"
       >
         Skip to content
       </a>
 
       {/* Custom Cursor */}
       <CustomCursor
-        cursorPosition={cursorPosition}
         cursorVariant={cursorVariant}
         selectedTool={selectedTool}
         tools={tools}
@@ -419,12 +426,11 @@ const Portfolio = () => {
           className="flex-1 bg-[#242424] overflow-y-auto scroll-smooth"
           role="main"
         >
-          <div className="max-w-6xl mx-auto px-6 py-16 md:px-8 md:py-10 space-y-18 pb-28 md:pb-16">
+          <div className="max-w-6xl mx-auto px-4 pt-5 pb-28 sm:px-6 sm:pt-10 md:px-8 md:py-10 md:pb-16 space-y-18">
             {!hiddenSections.has('about') && (
               <div className="transition-opacity duration-500">
                 <AboutSection
                   sectionsRef={sectionsRef}
-                  scrollToSection={scrollToSection}
                   setCursorVariant={setCursorVariant}
                 />
               </div>
@@ -490,6 +496,25 @@ const Portfolio = () => {
                 />
               </div>
             )}
+
+            {/* Empty canvas: every layer switched off */}
+            {hiddenSections.size === sections.length && (
+              <div className="flex flex-col items-center justify-center text-center py-24 gap-3">
+                <EyeOff className="w-8 h-8 text-slate-500" aria-hidden="true" />
+                <p className="text-lg font-semibold text-slate-200">All layers are hidden</p>
+                <p className="text-sm text-slate-400 max-w-sm">
+                  Turn a layer back on with its eye icon in the Layers panel, or bring everything back at once.
+                </p>
+                <button
+                  onClick={showAllSections}
+                  onMouseEnter={() => setCursorVariant('hover')}
+                  onMouseLeave={() => setCursorVariant('default')}
+                  className="mt-2 px-5 py-2.5 bg-ps-blue hover:bg-ps-blue-hover text-white text-sm font-semibold rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ps-accent cursor-pointer"
+                >
+                  Show all layers
+                </button>
+              </div>
+            )}
           </div>
         </main>
 
@@ -523,6 +548,8 @@ const Portfolio = () => {
       {lightboxOpen && lightboxImage && (
         <Lightbox
           lightboxImage={lightboxImage}
+          index={galleryPhotos.findIndex(p => p.id === lightboxImage.id)}
+          total={galleryPhotos.length}
           onClose={closeLightbox}
           onNavigate={navigateLightbox}
         />

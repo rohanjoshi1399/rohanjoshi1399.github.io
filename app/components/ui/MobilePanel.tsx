@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Layers, X, Eye, EyeOff } from 'lucide-react';
 
 interface Section {
@@ -28,6 +28,13 @@ export const MobilePanel = ({
     isOpen,
     onClose
 }: MobilePanelProps) => {
+    const closeRef = useRef<HTMLButtonElement>(null);
+
+    // Move focus into the sheet when it opens
+    useEffect(() => {
+        if (isOpen) closeRef.current?.focus();
+    }, [isOpen]);
+
     // Close the sheet on Escape while it is open
     useEffect(() => {
         if (!isOpen) return;
@@ -50,13 +57,14 @@ export const MobilePanel = ({
                 aria-hidden="true"
             />
 
-            {/* Bottom Sheet */}
+            {/* Bottom Sheet: inert while closed so its controls can't be tabbed to off-screen */}
             <div
                 className={`md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#323232] rounded-t-2xl shadow-2xl transform transition-transform duration-300 ease-out pb-[env(safe-area-inset-bottom)] ${isOpen ? 'translate-y-0' : 'translate-y-full'
                     }`}
                 role="dialog"
+                aria-modal="true"
                 aria-label="Layers"
-                aria-hidden={!isOpen}
+                inert={!isOpen}
             >
                 {/* Drag handle */}
                 <div className="flex justify-center pt-3 pb-1">
@@ -66,12 +74,13 @@ export const MobilePanel = ({
                 {/* Header */}
                 <div className="px-4 pb-3 pt-1 border-b border-black/30 flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                        <Layers className="w-5 h-5 text-cyan-400" aria-hidden="true" />
+                        <Layers className="w-5 h-5 text-ps-accent" aria-hidden="true" />
                         <h2 className="text-lg font-bold text-white">Layers</h2>
                     </div>
                     <button
+                        ref={closeRef}
                         onClick={onClose}
-                        className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
+                        className="p-2 hover:bg-slate-700 rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ps-accent"
                         aria-label="Close layers"
                     >
                         <X className="w-5 h-5 text-slate-400" aria-hidden="true" />
@@ -88,11 +97,11 @@ export const MobilePanel = ({
                         return (
                             <div
                                 key={section.id}
-                                className={`w-full flex items-center gap-3 p-2 rounded-lg transition-all ${isActive
-                                    ? 'bg-cyan-600'
+                                className={`w-full flex items-center gap-3 p-2 rounded-lg transition-colors ${isActive
+                                    ? 'bg-ps-blue'
                                     : isHidden
-                                        ? 'bg-slate-800/50 opacity-50'
-                                        : 'bg-slate-800'
+                                        ? 'bg-[#2C2C2C] opacity-50'
+                                        : 'bg-[#2C2C2C]'
                                     }`}
                             >
                                 {/* Row body navigates */}
@@ -101,7 +110,7 @@ export const MobilePanel = ({
                                         scrollToSection(section.id);
                                         onClose();
                                     }}
-                                    className="flex items-center gap-3 flex-1 min-h-[44px] text-left rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-cyan-400"
+                                    className="flex items-center gap-3 flex-1 min-h-[44px] text-left rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white"
                                     aria-current={isActive ? 'page' : undefined}
                                     aria-label={`Go to ${section.label}`}
                                 >
@@ -113,7 +122,7 @@ export const MobilePanel = ({
                                         <div className={`font-semibold ${isHidden ? 'line-through text-slate-500' : 'text-white'}`}>
                                             {section.label}
                                         </div>
-                                        <div className="text-xs text-slate-400">
+                                        <div className={`text-xs ${isActive ? 'text-blue-100' : 'text-slate-400'}`}>
                                             {isHidden ? 'Hidden' : 'Visible'}
                                         </div>
                                     </div>
@@ -125,7 +134,7 @@ export const MobilePanel = ({
                                         e.stopPropagation();
                                         onToggleVisibility(section.id);
                                     }}
-                                    className="w-11 h-11 flex items-center justify-center rounded-lg hover:bg-black/20 transition-colors flex-shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+                                    className="w-11 h-11 flex items-center justify-center rounded-lg hover:bg-black/20 transition-colors flex-shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
                                     aria-label={isHidden ? `Show ${section.label}` : `Hide ${section.label}`}
                                 >
                                     {isHidden ? (

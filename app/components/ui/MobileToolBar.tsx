@@ -36,24 +36,31 @@ export const MobileToolBar = ({
                         <button
                             key={section.id}
                             onClick={() => scrollToSection(section.id)}
-                            className={`flex-1 min-h-[44px] flex flex-col items-center justify-center gap-1 py-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-cyan-500 ${isActive ? 'text-cyan-400' : 'text-slate-400'
+                            className={`flex-1 min-h-[44px] flex flex-col items-center justify-center gap-1 py-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ps-accent ${isActive ? 'text-ps-accent' : 'text-slate-400'
                                 }`}
                             aria-label={`Go to ${section.label}`}
                             aria-current={isActive ? 'page' : undefined}
                         >
                             <Icon className="w-5 h-5" aria-hidden="true" />
-                            <span className="text-[10px] leading-none">{section.label}</span>
+                            <span className="text-[11px] leading-none max-[379px]:font-sans max-[379px]:tracking-tight">
+                                {section.id === 'experience' ? (
+                                    <>
+                                        <span className="max-[379px]:hidden">{section.label}</span>
+                                        <span className="hidden max-[379px]:inline">Work</span>
+                                    </>
+                                ) : section.label}
+                            </span>
                         </button>
                     );
                 })}
 
                 <button
                     onClick={onOpenLayers}
-                    className="flex-1 min-h-[44px] flex flex-col items-center justify-center gap-1 py-2 text-slate-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-cyan-500"
+                    className="flex-1 min-h-[44px] flex flex-col items-center justify-center gap-1 py-2 text-slate-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ps-accent"
                     aria-label="Open layers"
                 >
                     <Layers className="w-5 h-5" aria-hidden="true" />
-                    <span className="text-[10px] leading-none">Layers</span>
+                    <span className="text-[11px] leading-none max-[379px]:font-sans max-[379px]:tracking-tight">Layers</span>
                 </button>
             </div>
         </nav>

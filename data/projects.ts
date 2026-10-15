@@ -1,54 +1,47 @@
-import { Project } from '@/types/portfolio';
+import { CompactProject, Project } from '@/types/portfolio';
 
+// Featured case studies, rendered in full
 export const projects: Project[] = [
   {
     title: "Chorus: 8-Agent RAG System",
-    problem: "Engineers burn hours hunting through scattered docs, old Slack threads, and wikis just to answer a question like 'how did we implement auth?'",
-    solution: "An assistant that answers plain-English questions by searching across your docs, conversations, and code, returning sourced answers like a senior engineer who's read everything and never forgets.",
+    problem: "Engineers burn hours digging through scattered docs, Slack threads, and wikis to answer a question like 'how did we implement auth?'",
+    solution: "An assistant that answers plain-English questions from your docs, conversations, and code, with sources, like a senior engineer who's read everything and never forgets.",
     impact: [
-      "New hires get instant answers instead of interrupting teammates",
-      "Support teams surface solutions across docs and past tickets in seconds",
-      "Teams move fast without the endless document hunt"
+      "Hybrid search across Qdrant vectors, BM25 keywords, and a Neo4j knowledge graph, reranked by a BGE cross-encoder",
+      "Answers stream over WebSockets, with Redis-backed conversation memory"
     ],
-    highlight: "Eight specialized agents work as a team: one parses your question, others search the databases, and another fact-checks the answer before it reaches you.",
-    tech: ["LangGraph", "AWS Bedrock", "Qdrant", "Neo4j", "Python", "Docker"],
-    github: "https://github.com/rohanjoshi1399/Chorus",
-    gradient: "from-purple-500 to-pink-600",
-    impactLabel: "Who It Helps",
-    highlightLabel: "The Cool Part"
+    highlight: "The agents split the work: one parses your question, others search, and a grader rewrites weak queries and fact-checks the answer before it reaches you. That loop gets retrieval to 90% precision on technical documentation.",
+    tech: ["LangGraph", "AWS Bedrock", "Qdrant", "Neo4j", "Redis", "Python", "Docker"],
+    github: "https://github.com/rohanjoshi1399/Chorus"
   },
   {
     title: "Text-to-SQL with Reinforcement Learning",
-    problem: "LLMs can write SQL from plain English, but they're wrong often enough to be risky on a real database. What moves accuracy more, fine-tuning the weights or optimizing the prompt, and do the gains stack?",
-    solution: "I trained Llama 3.1 8B with GRPO reinforcement learning, rewarding it on whether each query actually ran correctly against a live database, then benchmarked it against supervised fine-tuning and DSPy prompt optimization.",
+    problem: "LLMs can write SQL from plain English, but they're wrong often enough to be risky on a real database.",
+    solution: "I trained Llama 3.1 8B with GRPO reinforcement learning, rewarding only queries that actually ran correctly, and tested whether it beats fine-tuning and prompt optimization, and whether the gains stack.",
     impact: [
-      "Reliable text-to-SQL lets anyone query a database in plain English",
-      "Execution-based rewards train on queries that actually run, not ones that just look right",
-      "Isolating RL, fine-tuning, and prompt-tuning shows where the gains really come from"
+      "A composite reward scores each query on execution accuracy, syntax validity, and schema coverage",
+      "LoRA fine-tuning with Dr. GRPO's length-bias correction keeps training stable"
     ],
-    highlight: "Fine-tuning alone memorizes join templates and regresses on hard queries; GRPO's execution reward restores that generalization, recovering +4.6 points on hard ones. That lifted it to 72.1% on Spider, past fine-tuning's 71.1%, while prompt-only optimization (DSPy) lagged at 8B scale.",
+    highlight: "Fine-tuning alone memorizes join templates and regresses on hard queries; GRPO's execution reward restores that generalization, recovering +4.6 points on hard ones and reaching 72.1% on Spider, past fine-tuning's 71.1%. Prompt-only optimization (DSPy) lagged at 8B scale.",
     tech: ["Python", "PyTorch", "TRL", "GRPO", "DSPy", "Llama 3.1 8B", "LoRA", "Spider"],
     github: "https://github.com/rohanjoshi1399/text2sql-rl",
-    gradient: "from-emerald-500 to-teal-600",
-    status: "Research",
-    impactLabel: "Why It's Interesting",
-    highlightLabel: "The Results"
+    status: "Research"
   },
   {
     title: "Ship of Theseus: Authorial Identity Decay",
-    problem: "Paraphrasing is the easiest way to slip AI-generated text past detectors. But rewrite a passage enough times and what fades first, its meaning or the author's fingerprint, and is there a point of no return?",
-    solution: "A forensics study of how repeated LLM paraphrasing erodes authorial identity. I ran 7 datasets through 7 paraphrasers and built a pipeline measuring stylistic, structural, and semantic decay at every rewrite, plus a dashboard that visualizes it in real time.",
+    problem: "Paraphrasing is the easiest way to slip AI text past detectors, but rewrite a passage enough times and what fades first: its meaning or the author's fingerprint?",
+    solution: "A forensics study of how repeated LLM paraphrasing erodes authorial identity, across 7 datasets and 7 paraphraser variants from 4 model families.",
     impact: [
-      "Content (named entities) decays 11.8× faster than style, so meaning erodes before voice does",
-      "Aggressive paraphrasers break authorship attribution in one pass; gentle ones survive about three",
-      "Each paraphraser leaves a fingerprint, distinguishable at 75.5% macro-F1"
+      "Tracks lexical (TTR, n-gram overlap), structural (POS, dependency depth), and semantic (BERTScore, SBERT) decay at every rewrite",
+      "Validates every finding with permutation tests and bootstrap intervals (p < 0.001)"
     ],
-    highlight: "It measures decay across three axes at once, lexical, structural, and semantic, validating every finding with permutation tests and bootstrap intervals (p < 0.001). t-SNE plots make authorial identity visibly pull apart with each rewrite.",
+    highlight: "Content (named entities) decays 11.8× faster than style, so meaning erodes before voice does. Aggressive paraphrasers break authorship attribution in one pass; gentle ones survive about three. And each paraphraser leaves a fingerprint, distinguishable at 75.5% macro-F1.",
     tech: ["Python", "spaCy", "BERTScore", "SBERT", "scikit-learn", "Streamlit"],
     github: "https://github.com/Asurkatha/ShipOfTheseus-NLP",
-    gradient: "from-amber-500 to-rose-600",
-    status: "Research",
-    impactLabel: "What It Reveals",
-    highlightLabel: "How It Works"
+    status: "Research"
   }
 ];
+
+// Compact "More Work" rows. Empty for now; the section hides itself until
+// something is added here.
+export const moreProjects: CompactProject[] = [];

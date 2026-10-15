@@ -18,7 +18,6 @@ export const SectionNav = ({ sections, activeSection, scrollToSection, setCursor
         <nav
             className="bg-[#2C2C2C] border-b border-black/30 hidden md:flex items-center overflow-x-auto scroll-smooth snap-x snap-mandatory font-mono"
             aria-label="Section navigation"
-            role="tablist"
         >
             {sections.map(section => (
                 <button
@@ -26,10 +25,8 @@ export const SectionNav = ({ sections, activeSection, scrollToSection, setCursor
                     onClick={() => scrollToSection(section.id)}
                     onMouseEnter={() => setCursorVariant('hover')}
                     onMouseLeave={() => setCursorVariant('default')}
-                    role="tab"
-                    aria-selected={activeSection === section.id}
-                    className={`min-w-max px-4 md:px-6 py-3 md:py-3 text-xs md:text-sm border-r border-black/30 flex items-center gap-2 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-cyan-500 cursor-pointer snap-start ${activeSection === section.id
-                        ? 'bg-[#242424] text-white border-b-2 border-cyan-500 font-semibold'
+                    className={`min-w-max px-4 md:px-6 py-3 md:py-3 text-xs md:text-sm border-r border-black/30 flex items-center gap-2 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ps-accent cursor-pointer snap-start ${activeSection === section.id
+                        ? 'bg-[#242424] text-white border-b-2 border-b-ps-blue font-semibold'
                         : 'bg-[#2C2C2C] text-slate-400 hover:text-white hover:bg-[#323232] active:bg-[#3C3C3C]'
                         }`}
                     aria-current={activeSection === section.id ? 'page' : undefined}

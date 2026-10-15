@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { MousePointer2 } from 'lucide-react';
 
 interface Tool {
@@ -10,19 +10,18 @@ interface Tool {
 }
 
 interface CustomCursorProps {
-    cursorPosition: { x: number; y: number };
     cursorVariant: 'default' | 'hover';
     selectedTool: string;
     tools: Tool[];
 }
 
 export const CustomCursor = ({
-    cursorPosition,
     cursorVariant,
     selectedTool,
     tools
 }: CustomCursorProps) => {
     const [isActive, setIsActive] = useState(false);
+    const cursorRef = useRef<HTMLDivElement>(null);
 
     // Only take over the cursor on a genuine desktop pointer (large screen, a
     // real mouse, no reduced-motion preference). Starts false so SSR / no-JS
@@ -48,6 +47,35 @@ export const CustomCursor = ({
         return () => root.classList.remove('custom-cursor-active');
     }, [isActive]);
 
+    // Track the mouse by writing the transform directly, so moving the mouse
+    // never re-renders React (previously the whole page re-rendered per frame).
+    useEffect(() => {
+        if (!isActive) return;
+
+        let rafId: number | null = null;
+        let lastX = 0;
+        let lastY = 0;
+
+        const handleMouseMove = (e: MouseEvent) => {
+            lastX = e.clientX;
+            lastY = e.clientY;
+            if (rafId === null) {
+                rafId = requestAnimationFrame(() => {
+                    if (cursorRef.current) {
+                        cursorRef.current.style.transform = `translate(${lastX}px, ${lastY}px) translate(-50%, -50%)`;
+                    }
+                    rafId = null;
+                });
+            }
+        };
+
+        window.addEventListener('mousemove', handleMouseMove, { passive: true });
+        return () => {
+            window.removeEventListener('mousemove', handleMouseMove);
+            if (rafId !== null) cancelAnimationFrame(rafId);
+        };
+    }, [isActive]);
+
     if (!isActive) return null;
 
     const activeTool = tools.find(t => t.id === selectedTool);
@@ -55,16 +83,13 @@ export const CustomCursor = ({
 
     return (
         <div
-            className="fixed pointer-events-none z-[9999] transition-transform duration-100"
-            style={{
-                left: `${cursorPosition.x}px`,
-                top: `${cursorPosition.y}px`,
-                transform: 'translate(-50%, -50%)'
-            }}
+            ref={cursorRef}
+            className="fixed left-0 top-0 pointer-events-none z-[9999]"
+            style={{ transform: 'translate(-100px, -100px)' }}
             aria-hidden="true"
         >
-            <div className={`transition-all duration-200 ${cursorVariant === 'hover' ? 'scale-110' : 'scale-100'}`}>
-                <ToolIcon className="w-5 h-5 text-cyan-400 drop-shadow-lg" />
+            <div className={`transition-transform duration-200 ${cursorVariant === 'hover' ? 'scale-110' : 'scale-100'}`}>
+                <ToolIcon className="w-5 h-5 text-slate-100 drop-shadow-[0_1px_1px_rgba(0,0,0,0.9)]" />
             </div>
         </div>
     );

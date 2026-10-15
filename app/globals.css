@@ -6,6 +6,16 @@
   --font-mono: var(--font-geist-mono);
 }
 
+/* One accent, borrowed from Photoshop's own UI, plus a status green for
+   availability. Everything else is the workspace greys. */
+@theme {
+  --color-ps-blue: #1473E6;        /* selection / primary fill (white text 4.5:1) */
+  --color-ps-blue-hover: #0D66D0;
+  --color-ps-accent: #4B9CF5;      /* accent text on dark canvas (5:1 on #2A2A2A) */
+  --color-ps-green: #3FCF8E;       /* availability status */
+  --color-ps-card: #2A2A2A;        /* flat panels on the #242424 canvas */
+}
+
 /* Hide the native cursor ONLY while the JS-driven custom cursor is active.
    The class is added by CustomCursor (large screen + real mouse + motion ok),
    so any JS failure or unsupported device falls back to the system cursor. */
@@ -14,15 +24,27 @@ html.custom-cursor-active * {
   cursor: none !important;
 }
 
+html {
+  color-scheme: dark;
+  accent-color: #1473E6;
+  caret-color: #4B9CF5;
+  scrollbar-color: #4A4A4A #242424;
+}
+
 body {
   background: #242424;
   color: #ededed;
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
 
+::selection {
+  background: #1473E6;
+  color: #ffffff;
+}
+
 /* Accessibility: Enhanced focus states */
 *:focus-visible {
-  outline: 2px solid #06B6D4;
+  outline: 2px solid #4B9CF5;
   outline-offset: 2px;
 }
 

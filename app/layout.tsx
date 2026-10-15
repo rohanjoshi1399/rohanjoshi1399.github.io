@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 const SITE_URL = "https://rohanjoshi1399.github.io";
 const SITE_TITLE = "Rohan Joshi | Software Engineer, AI/ML & Distributed Systems";
 const SITE_DESCRIPTION =
-  "Software engineer with 4+ years building data analytics and AI systems on AWS, including RAG, multi-agent AI, and distributed systems. Currently pursuing an M.S. in Computer Science at Northeastern.";
+  "Software engineer with 4+ years building data analytics and AI systems on AWS, including RAG, multi-agent AI, and distributed systems. M.S. in Computer Science at Northeastern, graduating May 2027 and open to full-time roles.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

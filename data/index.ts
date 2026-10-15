@@ -4,13 +4,12 @@
 export { personalInfo } from './personal';
 export { education } from './education';
 export { experience } from './experience';
-export { projects } from './projects';
-export { skillCategories, additionalSkills } from './skills';
+export { projects, moreProjects } from './projects';
+export { skillCategories } from './skills';
 export {
-  // quickStats, 
+  // quickStats,
   contactMethods,
-  seekingOpportunities,
-  sectionDescriptions
+  seekingOpportunities
 } from './staticContent';
 
 // You can also export types from here if needed
@@ -19,6 +18,7 @@ export type {
   Education,
   Experience,
   Project,
+  CompactProject,
   SkillCategory,
   QuickStat,
   ContactMethod,

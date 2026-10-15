@@ -11,7 +11,7 @@ interface TopBarProps {
 
 export const TopBar = ({ scrollToSection, setCursorVariant }: TopBarProps) => {
     const [fileMenuOpen, setFileMenuOpen] = useState(false);
-    const [emailCopied, setEmailCopied] = useState(false);
+    const [copyState, setCopyState] = useState<'idle' | 'copied' | 'failed'>('idle');
     const fileMenuRef = useRef<HTMLDivElement>(null);
 
     // Close the File dropdown on outside click or Escape.
@@ -38,11 +38,12 @@ export const TopBar = ({ scrollToSection, setCursorVariant }: TopBarProps) => {
     const handleCopyEmail = async () => {
         try {
             await navigator.clipboard.writeText(personalInfo.email);
-            setEmailCopied(true);
-            setTimeout(() => setEmailCopied(false), 1500);
+            setCopyState('copied');
         } catch {
-            // Clipboard may be unavailable (e.g. insecure context); fail silently.
+            // Clipboard may be unavailable (e.g. insecure context); say so instead of failing silently.
+            setCopyState('failed');
         }
+        setTimeout(() => setCopyState('idle'), 1500);
     };
 
     const fileMenuItemClass =
@@ -67,7 +68,7 @@ export const TopBar = ({ scrollToSection, setCursorVariant }: TopBarProps) => {
                                 onMouseLeave={() => setCursorVariant('default')}
                                 aria-haspopup="true"
                                 aria-expanded={fileMenuOpen}
-                                className={`transition-colors focus:outline-none focus:text-white focus:underline ${fileMenuOpen ? 'text-white' : 'hover:text-white'}`}
+                                className={`transition-colors focus:outline-none focus-visible:text-white focus-visible:underline ${fileMenuOpen ? 'text-white' : 'hover:text-white'}`}
                             >
                                 File
                             </button>
@@ -87,7 +88,7 @@ export const TopBar = ({ scrollToSection, setCursorVariant }: TopBarProps) => {
                                         onMouseLeave={() => setCursorVariant('default')}
                                         className={`block ${fileMenuItemClass}`}
                                     >
-                                        Download Résumé
+                                        Open Résumé (PDF)
                                     </a>
                                     <a
                                         href={personalInfo.github}
@@ -109,7 +110,7 @@ export const TopBar = ({ scrollToSection, setCursorVariant }: TopBarProps) => {
                                         onMouseLeave={() => setCursorVariant('default')}
                                         className={fileMenuItemClass}
                                     >
-                                        {emailCopied ? 'Copied!' : 'Copy Email'}
+                                        {copyState === 'copied' ? 'Copied!' : copyState === 'failed' ? 'Copy failed' : 'Copy Email'}
                                     </button>
                                     <button
                                         type="button"
@@ -127,21 +128,22 @@ export const TopBar = ({ scrollToSection, setCursorVariant }: TopBarProps) => {
                                 </div>
                             )}
                         </div>
+                        {/* Decorative menus: part of the Photoshop look, not interactive, so they stay out of the tab order */}
                         {['Edit', 'Image', 'Layer', 'Type', 'Select', 'Filter', 'View', 'Window', 'Help'].map(menu => (
-                            <button key={menu} className="hover:text-white transition-colors focus:outline-none focus:text-white focus:underline">{menu}</button>
+                            <span key={menu} className="hover:text-white transition-colors cursor-default" aria-hidden="true">{menu}</span>
                         ))}
                     </nav>
                 </div>
-                <div className="flex items-center gap-2">
-                    <button className="text-slate-400 hover:text-white hidden md:block transition-colors p-1 focus:outline-none focus:ring-2 focus:ring-cyan-500 rounded" aria-label="Minimize">
+                <div className="flex items-center gap-2" aria-hidden="true">
+                    <span className="text-slate-400 hover:text-white hidden md:block transition-colors p-1 rounded">
                         <Minus className="w-4 h-4" />
-                    </button>
-                    <button className="text-slate-400 hover:text-white hidden md:block transition-colors p-1 focus:outline-none focus:ring-2 focus:ring-cyan-500 rounded" aria-label="Maximize">
+                    </span>
+                    <span className="text-slate-400 hover:text-white hidden md:block transition-colors p-1 rounded">
                         <Maximize2 className="w-4 h-4" />
-                    </button>
-                    <button className="text-slate-400 hover:text-red-400 hidden md:block transition-colors p-1 focus:outline-none focus:ring-2 focus:ring-red-500 rounded" aria-label="Close">
+                    </span>
+                    <span className="text-slate-400 hover:text-red-400 hidden md:block transition-colors p-1 rounded">
                         <X className="w-4 h-4" />
-                    </button>
+                    </span>
                 </div>
             </div>
         </>

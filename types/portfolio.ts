@@ -8,7 +8,8 @@ export interface PersonalInfo {
   phone: string;
   linkedin: string;
   github: string;
-  availability: string;
+  availability: string;       // full availability line, e.g. "Open to full-time roles from May 2027"
+  availabilityShort: string;  // compact version for tight chrome (phone options bar)
   summary: string;
 }
 
@@ -19,6 +20,7 @@ export interface Education {
   period: string;
   courses: string[];
   current: boolean;
+  gpa?: string;             // shown as a badge next to the degree
 }
 
 export interface Project {
@@ -29,10 +31,20 @@ export interface Project {
   highlight: string;
   tech: string[];
   github: string;
-  gradient: string;
+  live?: string;            // optional live demo URL
   status?: string;          // optional badge, e.g. "In Progress", "Research"
-  impactLabel?: string;     // overrides the impact-section heading (default "Where It Matters")
-  highlightLabel?: string;  // overrides the highlight-box heading (default "The Numbers")
+  impactLabel?: string;     // overrides the impact-section heading (default "How It Works")
+  highlightLabel?: string;  // overrides the highlight heading (default "The Results")
+}
+
+// Smaller work shown as compact rows under the featured case studies
+export interface CompactProject {
+  title: string;
+  summary: string;
+  tech: string[];
+  github?: string;
+  live?: string;
+  status?: string;
 }
 
 export interface Experience {
@@ -40,18 +52,16 @@ export interface Experience {
   company: string;
   location: string;
   period: string;
-  challenge?: string;
-  solution: string;
-  impact: string[];
-  technical?: string;
-  achievements: string[];  // Keep for backward compatibility if needed
+  solution: string;          // one-line summary of the role
+  achievements: string[];
   tech: string[];
+  link?: { label: string; href: string };
 }
 
 export interface SkillCategory {
   category: string;
   skills: string[];
-  icon: 'zap' | 'code' | 'cloud' | 'git-branch';
+  icon: 'zap' | 'code' | 'cloud' | 'database';
 }
 
 export interface QuickStat {
@@ -65,7 +75,6 @@ export interface ContactMethod {
   label: string;
   value: string;
   href: string;
-  gradient: string;
   action: string;
 }
 
@@ -80,5 +89,6 @@ export interface GalleryPhoto {
   id: number;
   title: string;
   caption: string;
+  location: string;
   src: string;
 }

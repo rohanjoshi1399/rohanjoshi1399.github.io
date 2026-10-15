@@ -1,22 +1,20 @@
 "use client";
 
-import { Mail, Briefcase, ExternalLink } from 'lucide-react';
-import { contactMethods, seekingOpportunities } from '@/data';
+import { Mail, Briefcase, ExternalLink, ArrowRight, Github, Linkedin, FileText } from 'lucide-react';
+import { contactMethods, personalInfo, seekingOpportunities } from '@/data';
+import { ContactMethod } from '@/types/portfolio';
+import { AvailabilityChip } from '../ui/AvailabilityChip';
 
 interface ContactSectionProps {
     sectionsRef: React.MutableRefObject<{ [key: string]: HTMLElement | null }>;
     setCursorVariant: (variant: 'default' | 'hover') => void;
 }
 
-const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
-    'zap': require('lucide-react').Zap,
-    'code': require('lucide-react').Code,
-    'cloud': require('lucide-react').Cloud,
-    'git-branch': require('lucide-react').GitBranch,
+const iconMap: Record<ContactMethod['icon'], React.ComponentType<{ className?: string }>> = {
     'mail': Mail,
-    'github': require('lucide-react').Github,
-    'linkedin': require('lucide-react').Linkedin,
-    'file-text': require('lucide-react').FileText
+    'github': Github,
+    'linkedin': Linkedin,
+    'file-text': FileText
 };
 
 export const ContactSection = ({ sectionsRef, setCursorVariant }: ContactSectionProps) => {
@@ -29,55 +27,60 @@ export const ContactSection = ({ sectionsRef, setCursorVariant }: ContactSection
         >
             <div className="space-y-8">
                 <div className="flex items-center gap-3 mb-6">
-                    <Mail className="w-7 h-7 text-orange-400" aria-hidden="true" />
+                    <Mail className="w-7 h-7 text-ps-accent" aria-hidden="true" />
                     <h2 id="contact-heading" className="text-3xl md:text-4xl font-bold text-white font-mono">Get In Touch</h2>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-5">
-                    {contactMethods.map((contact, idx) => {
+                    {contactMethods.map((contact) => {
                         const IconComponent = iconMap[contact.icon];
+                        const isExternal = !contact.href.startsWith('mailto:');
+                        const TrailingIcon = isExternal ? ExternalLink : ArrowRight;
                         return (
                             <a
-                                key={idx}
+                                key={contact.label}
                                 href={contact.href}
-                                target={contact.href === '#' || contact.href.startsWith('mailto:') ? undefined : "_blank"}
-                                rel={contact.href === '#' || contact.href.startsWith('mailto:') ? undefined : "noopener noreferrer"}
+                                target={isExternal ? "_blank" : undefined}
+                                rel={isExternal ? "noopener noreferrer" : undefined}
                                 onMouseEnter={() => setCursorVariant('hover')}
                                 onMouseLeave={() => setCursorVariant('default')}
-                                className="spring-button flex items-center justify-between gap-4 p-6 bg-gradient-to-br from-[#2C2C2C] to-[#1a1a1a] border border-slate-700/50 rounded-xl hover:border-cyan-500/30 transition-all group focus:outline-none focus:ring-2 focus:ring-cyan-400 cursor-pointer hover-glow"
+                                className="flex items-center justify-between gap-4 p-5 md:p-6 bg-ps-card border border-slate-700/50 rounded-xl hover:border-slate-500 transition-colors group focus:outline-none focus-visible:ring-2 focus-visible:ring-ps-accent cursor-pointer"
                             >
-                                <div className="flex items-center gap-4 flex-1">
-                                    <div className={`w-14 h-14 bg-gradient-to-br ${contact.gradient} rounded-lg flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
-                                        <IconComponent className="w-7 h-7 text-white" />
+                                <div className="flex items-center gap-4 flex-1 min-w-0">
+                                    <div className="w-12 h-12 bg-[#3C3C3C] rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <IconComponent className="w-6 h-6 text-slate-200" aria-hidden="true" />
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <div className="font-bold text-white mb-1 text-sm md:text-base">{contact.label}</div>
                                         <div className="text-sm text-slate-400 truncate">{contact.value}</div>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-2 text-cyan-400 group-hover:text-cyan-300">
+                                <div className="flex items-center gap-2 text-ps-accent group-hover:text-white transition-colors">
                                     <span className="text-xs font-medium hidden sm:inline">{contact.action}</span>
-                                    <ExternalLink className="w-4 h-4" />
+                                    <TrailingIcon className="w-4 h-4" aria-hidden="true" />
                                 </div>
                             </a>
                         );
                     })}
                 </div>
 
-                <div className="bg-gradient-to-br from-cyan-500/10 via-blue-500/10 to-purple-500/10 rounded-xl p-8 border border-cyan-500/20">
-                    <h3 className="font-bold text-white text-lg md:text-xl mb-4 flex items-center gap-2">
-                        <Briefcase className="w-6 h-6 text-cyan-400" aria-hidden="true" />
-                        {seekingOpportunities.title}
-                    </h3>
-                    <div className="grid md:grid-cols-2 gap-3 mb-6">
-                        {seekingOpportunities.areas.map((interest, i) => (
-                            <div key={i} className="flex items-center gap-2 text-slate-200">
-                                <div className="w-2 h-2 bg-cyan-400 rounded-full" />
-                                <span className="text-sm font-medium">{interest}</span>
-                            </div>
-                        ))}
+                <div className="bg-ps-card rounded-xl p-6 md:p-8 border border-slate-700/50">
+                    <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
+                        <h3 className="font-bold text-white text-lg md:text-xl flex items-center gap-2">
+                            <Briefcase className="w-6 h-6 text-ps-accent" aria-hidden="true" />
+                            {seekingOpportunities.title}
+                        </h3>
+                        <AvailabilityChip text={personalInfo.availability} />
                     </div>
-                    <p className="text-slate-300 text-sm md:text-base leading-relaxed">
+                    <ul className="grid md:grid-cols-3 gap-3 mb-6">
+                        {seekingOpportunities.areas.map((interest) => (
+                            <li key={interest} className="flex items-center gap-2 text-slate-200">
+                                <span className="w-1.5 h-1.5 bg-ps-accent rounded-full flex-shrink-0" aria-hidden="true" />
+                                <span className="text-sm font-medium">{interest}</span>
+                            </li>
+                        ))}
+                    </ul>
+                    <p className="text-slate-300 text-base leading-relaxed max-w-[70ch]">
                         {seekingOpportunities.description}
                     </p>
                 </div>

@@ -31,15 +31,13 @@ export const contactMethods: ContactMethod[] = [
     label: "Email",
     value: "joshi.rohan@northeastern.edu",
     href: "mailto:joshi.rohan@northeastern.edu",
-    gradient: "from-cyan-500 to-blue-600",
     action: "Send Email"
   },
   {
     icon: "github",
     label: "GitHub",
-    value: "",
+    value: "github.com/rohanjoshi1399",
     href: "https://github.com/rohanjoshi1399",
-    gradient: "from-slate-600 to-slate-800",
     action: "View Profile"
   },
   {
@@ -47,15 +45,13 @@ export const contactMethods: ContactMethod[] = [
     label: "LinkedIn",
     value: "linkedin.com/in/therohanjoshi",
     href: "https://linkedin.com/in/therohanjoshi",
-    gradient: "from-blue-600 to-blue-800",
     action: "Connect"
   },
   {
     icon: "file-text",
-    label: "Resume",
-    value: "",
+    label: "Résumé",
+    value: "PDF, 1 page",
     href: "/resume.pdf",
-    gradient: "from-purple-600 to-pink-600",
     action: "View PDF"
   }
 ];
@@ -64,17 +60,9 @@ export const contactMethods: ContactMethod[] = [
 export const seekingOpportunities = {
   title: "What I'm Looking For",
   areas: [
-    "AI/ML Engineering",
-    "RAG Systems",
-    "Multi-Agent AI",
-    "Distributed Systems",
-    "Backend Development",
-    "Cloud Infrastructure"
+    "AI/ML engineering (LLMs, RAG, agents)",
+    "Backend and distributed systems",
+    "ML infrastructure on AWS"
   ],
-  description: "I'm interested in companies tackling problems that matter, whether that's building cutting-edge AI applications, scaling systems to millions of users, or creating the infrastructure that powers the next generation of technology. I learn quickly, collaborate well, and love diving into hard technical problems."
-};
-
-// Section descriptions
-export const sectionDescriptions = {
-  contact: "If you're working on interesting problems in AI systems, distributed architectures, or backend infrastructure, I'd love to chat."
+  description: "I want to own AI and data systems end to end, from retrieval quality to the infrastructure underneath. I learn quickly, collaborate well, and love diving into hard technical problems."
 };

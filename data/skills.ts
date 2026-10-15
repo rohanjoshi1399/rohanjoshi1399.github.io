@@ -1,57 +1,52 @@
 import { SkillCategory } from '@/types/portfolio';
 
+// Mirrors the Technical Skills section of public/resume.pdf
 export const skillCategories: SkillCategory[] = [
   {
-    category: "AI/ML Technologies",
-    skills: [
-      "LangChain",
-      "PyTorch",
-      "TensorFlow",
-      "Scikit-learn",
-      "HuggingFace",
-      "OpenAI API"
-    ],
-    icon: "zap"
-  },
-  {
-    category: "Programming Languages",
+    category: "Languages",
     skills: [
       "Python",
       "Java",
-      "C++",
+      "SQL",
       "JavaScript",
       "TypeScript",
-      "SQL"
+      "C++"
     ],
     icon: "code"
   },
   {
-    category: "Cloud & Infrastructure",
+    category: "ML & AI",
     skills: [
-      "AWS (Bedrock, SageMaker, Glue)",
-      "Lambda",
-      "Aurora",
-      "DynamoDB",
-      "Docker"
+      "PyTorch",
+      "TensorFlow",
+      "LangChain",
+      "LangGraph",
+      "Scikit-learn",
+      "Pandas",
+      "NumPy"
+    ],
+    icon: "zap"
+  },
+  {
+    category: "Cloud & Tools",
+    skills: [
+      "AWS (Bedrock, SageMaker, Glue, Lambda, EC2, SQS, ALB)",
+      "Docker",
+      "Git",
+      "Linux"
     ],
     icon: "cloud"
   },
   {
-    category: "Web Development",
+    category: "Databases",
     skills: [
-      "React.js",
-      "Node.js",
-      "Flask",
-      "FastAPI",
-      "Tailwind CSS"
+      "PostgreSQL",
+      "Aurora",
+      "Qdrant",
+      "Neo4j",
+      "MongoDB",
+      "Redis"
     ],
-    icon: "git-branch"
+    icon: "database"
   }
 ];
-
-// Additional skills that don't fit in main categories
-export const additionalSkills = {
-  aiDevelopmentTools: ["Cursor IDE", "GitHub Copilot"],
-  databases: ["PostgreSQL", "MongoDB", "Redis"],
-  tools: ["Git", "Figma", "Postman", "Linux", "VS Code"]
-};
